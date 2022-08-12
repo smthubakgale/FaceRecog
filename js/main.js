@@ -2,6 +2,7 @@ const video = document.getElementById("video");
 const isScreenSmall = window.matchMedia("(max-width: 700px)");
 let predictedAges = [];
 
+console.log("Starting");
 Promise.all([
   faceapi.nets.tinyFaceDetector.load("/models"),
   faceapi.nets.faceLandmark68Net.load("/models"),
@@ -11,6 +12,9 @@ Promise.all([
 ]).then(startVideo);
 
 function startVideo() {
+  
+  console.log("Done");
+  
   navigator.getUserMedia(
     { video: {} },
     stream => (video.srcObject = stream),
