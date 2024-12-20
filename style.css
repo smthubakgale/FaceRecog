@@ -1,0 +1,19 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#imageList {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#imageList img {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    border: 1px solid #ccc;
+}
+
+#result {
+    margin-top: 20px;
+}
