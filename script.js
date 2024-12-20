@@ -115,7 +115,7 @@ function detectFacesInVideoStream() {
     return faces;
   }
   else{
-    return null;
+    return [];
   }
 }
 
