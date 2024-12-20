@@ -93,22 +93,30 @@ function detectFacesInVideoStream() {
   canvas.height = video.videoHeight;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(video, 0, 0);
-  const tensor = tf.browser.fromPixels(canvas);
-  const outputs = faceDetectionModel.predict(tensor);
-  const faces = outputs.dataSync();
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  faces.forEach(face => {
-    const x = face;
-    const y = face;
-    const w = face;
-    const h = face;
-    ctx.beginPath();
-    ctx.rect(x, y, w, h);
-    ctx.strokeStyle = 'red';
-    ctx.stroke();
-  });
-  tensor.dispose();
-  return faces;
+  let tensor ;
+  
+  try{ tensor = tf.browser.fromPixels(canvas);} catch{}
+
+  if(tensor){
+    const outputs = faceDetectionModel.predict(tensor);
+    const faces = outputs.dataSync();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    faces.forEach(face => {
+      const x = face;
+      const y = face;
+      const w = face;
+      const h = face;
+      ctx.beginPath();
+      ctx.rect(x, y, w, h);
+      ctx.strokeStyle = 'red';
+      ctx.stroke();
+    });
+    tensor.dispose();
+    return faces;
+  }
+  else{
+    return null;
+  }
 }
 
 // Capture Face as Image
