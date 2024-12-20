@@ -7,9 +7,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <h1>Facial Recognition</h1>
     <input type="file" id="imageInput" accept="image/*">
     <div id="imageList"></div>
     <div id="result"></div>
+    <video id="video" width="640" height="480"></video>
+    <button id="captureFaceButton">Capture Face</button>
+    <button id="groupFacesButton">Group Faces</button>
+    <div id="faceGroups"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
     <script src="script.js"></script>
