@@ -2,7 +2,7 @@
 
 // Global Variables
 let model;
-let imageList = ;
+let imageList = [];
 
 // Load Facial Recognition Model
 async function loadModel() {
@@ -102,7 +102,7 @@ async function detectFace(imageTensor) {
 async function addImageToLIst(file) {
   const imageTensor = await loadImageAndPreprocess(file);
   const faceDescriptor = await detectFace(imageTensor);
-  imageList.push({ image: file, faceDescriptor });
+  imageList.push({ image: file, faceDescriptor:faceDescriptor });
   updateImageList();
 }
 
