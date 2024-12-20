@@ -3,6 +3,8 @@
 // Global Variables
 let model;
 let imageList = [];
+let faceGroups = [];
+let faceDetectionModel;
 
 // Load Facial Recognition Model
 async function loadModel() {
@@ -22,7 +24,7 @@ async function createModel() {
   // Define model architecture
   const model = tf.sequential();
   model.add(tf.layers.conv2d({
-    inputShape: ,
+    inputShape: null,
     filters: 32,
     kernelSize: 3,
     activation: 'relu'
@@ -77,32 +79,56 @@ async function saveModel(model) {
   console.log(`Model saved: ${saveResult.modelArtifactsInfo.modelTopology}`);
 }
 
-// Load Image and Preprocess
-async function loadImageAndPreprocess(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const imageData = new ImageData(reader.result);
-      const tensor = tf.browser.fromPixels(imageData);
-      const normalizedTensor = tf.div(tensor, 255);
-      resolve(normalizedTensor);
-    };
-    reader.readAsDataURL(file);
+// Load Face Detection Model
+async function loadFaceDetectionModel() {
+  faceDetectionModel = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/face_detection/model.json');
+  console.log('Face detection model loaded');
+}
+
+// Detect Faces in Video Stream
+function detectFacesInVideoStream() {
+  const video = document.getElementById('video');
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+  const tensor = tf.browser.fromPixels(canvas);
+  const outputs = faceDetectionModel.predict(tensor);
+  const faces = outputs.dataSync();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  faces.forEach(face => {
+    const x = face;
+    const y = face;
+    const w = face;
+    const h = face;
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.strokeStyle = 'red';
+    ctx.stroke();
   });
+  tensor.dispose();
+  return faces;
 }
 
-// Detect Face in Image
-async function detectFace(imageTensor) {
-  const output = model.predict(imageTensor);
-  const result = output.dataSync();
-  return result;
+// Capture Face as Image
+function captureFaceAsImage(face) {
+  const video = document.getElementById('video');
+  const canvas = document.createElement('canvas');
+  canvas.width = face;
+  canvas.height = face;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, face, face, face, face, 0, 0, face, face);
+  const imageData = canvas.toDataURL();
+  return imageData;
 }
 
-// Add Image to List
-async function addImageToLIst(file) {
-  const imageTensor = await loadImageAndPreprocess(file);
-  const faceDescriptor = await detectFace(imageTensor);
-  imageList.push({ image: file, faceDescriptor:faceDescriptor });
+// Add Face to Image List
+function addFaceToImageList(face) {
+  const imageData = captureFaceAsImage(face);
+  const image = new Image();
+  image.src = imageData;
+  imageList.push({ image, faceDescriptor: face });
   updateImageList();
 }
 
@@ -112,43 +138,86 @@ function updateImageList() {
   imageListElement.innerHTML = '';
   imageList.forEach((image, index) => {
     const imgElement = document.createElement('img');
-    imgElement.src = URL.createObjectURL(image.image);
+    imgElement.src = image.image.src;
     imgElement.title = `Image ${index + 1}`;
     imageListElement.appendChild(imgElement);
   });
 }
 
-// Check if Image is Already in List
-function isImageAlreadyInList(image) {
-  return imageList.some((listImage) => {
-    const imageTensor = tf.browser.fromPixels(listImage.image);
-    const tensor = tf.browser.fromPixels(image);
-    const similarity = tf.metrics.cosineSimilarity(imageTensor, tensor);
-    return similarity.dataSync() > 0.5; // Adjust similarity threshold
+// Group Faces by Name
+function groupFacesByName() {
+  const groupName = prompt('Enter group name:');
+  if (groupName) {
+    const groupedFaces = imageList.filter(face => face.faceDescriptor === groupName);
+    const group = { name: groupName, faces: groupedFaces };
+    faceGroups.push(group);
+    updateFaceGroups();
+  }
+}
+
+// Update Face Groups
+function updateFaceGroups() {
+  const faceGroupsElement = document.getElementById('faceGroups');
+  faceGroupsElement.innerHTML = '';
+  faceGroups.forEach(group => {
+    const groupElement = document.createElement('div');
+    groupElement.textContent = group.name;
+    group.faces.forEach(face => {
+      const faceElement = document.createElement('img');
+      faceElement.src = face.image.src;
+      groupElement.appendChild(faceElement);
+    });
+    faceGroupsElement.appendChild(groupElement);
   });
 }
 
-// Handle Image Upload
-document.getElementById('imageInput').addEventListener('change', (e) => {
-  const file = e.target.files;
-  if (!isImageAlreadyInList(file)) {
-    addImageToLIst(file).then(() => {
-      makePrediction();
-    });
-  } else {
-    console.log('Image already in list');
-  }
-});
-
-// Make Prediction
-async function makePrediction() {
-  const inputImage = await loadImageAndPreprocess(imageList.image);
-  const output = model.predict(inputImage);
-  const result = output.dataSync();
-  document.getElementById('result').innerText = `Prediction: ${result}`;
+// Draw Face Bounding Box
+function drawFaceBoundingBox(face) {
+  const video = document.getElementById('video');
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.beginPath();
+  ctx.rect(face, face, face, face);
+  ctx.strokeStyle = 'red';
+  ctx.stroke();
 }
 
 // Initialize
 loadModel().then(() => {
-  console.log('Model loaded');
+  loadFaceDetectionModel().then(() => {
+    // Get video stream from webcam
+    navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+        video.play();
+        setInterval(() => {
+          const faces = detectFacesInVideoStream();
+          if (faces.length > 0) {
+            addFaceToImageList(faces);
+          }
+        }, 100);
+      })
+.catch(error => console.error(error));
+  });
 });
+
+// Event listeners
+document.getElementById('captureFaceButton').addEventListener('click', () => {
+  const faces = detectFacesInVideoStream();
+  if (faces.length > 0) {
+    addFaceToImageList(faces);
+  }
+});
+
+document.getElementById('groupFacesButton').addEventListener('click', groupFacesByName);
+
+// Face detection interval
+setInterval(() => {
+  const faces = detectFacesInVideoStream();
+  faces.forEach(face => {
+    drawFaceBoundingBox(face);
+  });
+}, 100);
