@@ -50,7 +50,7 @@ async function createModel() {
   model.compile({
     optimizer: tf.optimizers.adam(),
     loss: 'categoricalCrossentropy',
-    metrics: 
+    metrics: []
   });
 
   return model;
