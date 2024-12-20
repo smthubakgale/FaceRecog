@@ -9,7 +9,7 @@ let faceDetectionModel;
 // Load Facial Recognition Model
 async function loadModel() {
   // Check if model exists
-  model = await tf.loadLayersModel('localstorage://my-facial-recognition-model');
+  try{ model = await tf.loadLayersModel('localstorage://my-facial-recognition-model');}catch{}
   if (!model) {
     // Create and train new model
     model = await createModel();
