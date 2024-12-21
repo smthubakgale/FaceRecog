@@ -58,9 +58,7 @@
             // Step 8: Load face cascade 
             const faceCascade = new cv.CascadeClassifier();
             faceCascade.load('https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml');
-            // Step 9: Convert canvas to OpenCV matrix
-            //const img = new cv.Mat();
-            //cv.umd.read(ctx.getImageData(0, 0, canvas.width, canvas.height), img);
+            // Step 9: Convert canvas to OpenCV matrix 
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const img = cv.matFromImageData(imageData);
 
@@ -68,32 +66,40 @@
             const gray = new cv.Mat();
             cv.cvtColor(img, gray, cv.COLOR_RGBA2GRAY);
 
+            console.log(10);
             // Step 11: Detect faces
             const faces = new cv.RectVector();
             faceCascade.detectMultiScale(gray, faces);
 
+            console.log(11);
             // Step 12: Extract face region
             const faceRect = faces.get(0);
             const faceImg = img.roi(faceRect);
 
+            console.log(12);
             // Step 13: Resize face image
             const alignedFace = new cv.Mat();
             cv.resize(faceImg, alignedFace, new cv.Size(112, 112));
 
+            console.log(13);
             // Step 14: Load MobileFaceNet model
             const tf = require('@tensorflow/tfjs');
             const mobileFaceNet = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json');
 
+            console.log(14);
             // Step 15: Extract facial features
             const tensor = tf.browser.fromPixels(alignedFace);
             const inputs = tf.expandDims(tensor, 0);
             const features = mobileFaceNet.predict(inputs);
             const embedding = features.dataSync();
 
+            console.log(15);
             // Step 16: Display features
             featuresOutput.innerText = `Features extracted: ${embedding.length} dimensions`;
             console.log(embedding);
 
+
+            console.log(16);
             // Step 17: Release resources
             img.delete();
             gray.delete();
@@ -102,6 +108,8 @@
             tensor.dispose();
             inputs.dispose();
             features.dispose();
+
+            console.log(17);
         });
     </script>
 </body>
