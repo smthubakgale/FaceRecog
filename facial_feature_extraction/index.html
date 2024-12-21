@@ -59,10 +59,10 @@
             const faceCascade = new cv.CascadeClassifier();
             faceCascade.load('https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml');
             // Step 9: Convert canvas to OpenCV matrix
-            const img = new cv.Mat();
+            //const img = new cv.Mat();
             //cv.umd.read(ctx.getImageData(0, 0, canvas.width, canvas.height), img);
-            const umat = new cv.UMat(img.data, canvas.width, canvas.height, cv.CV_8UC4);
-            const mat = cv.UMatToMat(umat);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const mat = cv.matFromImageData(imageData);
 
             // Step 10: Convert image to grayscale
             const gray = new cv.Mat();
