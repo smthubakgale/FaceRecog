@@ -62,7 +62,7 @@
             //const img = new cv.Mat();
             //cv.umd.read(ctx.getImageData(0, 0, canvas.width, canvas.height), img);
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const mat = cv.matFromImageData(imageData);
+            const img = cv.matFromImageData(imageData);
 
             // Step 10: Convert image to grayscale
             const gray = new cv.Mat();
