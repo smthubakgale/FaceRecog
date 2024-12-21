@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facial Feature Extraction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Facial Feature Extraction</h1>
+    <input type="file" id="imageInput" accept="image/*">
+    <canvas id="canvas" width="300" height="300"></canvas>
+    <button id="extractFeaturesButton" disabled>Extract Features</button>
+    <div id="featuresOutput"></div>
+
+    <script async src="https://docs.opencv.org/3.4/opencv.js" type="text/javascript"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+    <script>
+        // Step 1: Get input elements
+        const imageInput = document.getElementById('imageInput');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const extractFeaturesButton = document.getElementById('extractFeaturesButton');
+        const featuresOutput = document.getElementById('featuresOutput');
+
+        // Step 2: Handle image input change
+        imageInput.addEventListener('change', (e) => {
+            // Step 3: Read selected image
+            const file = e.target.files;
+            const reader = new FileReader();
+            reader.onload = () => {
+                // Step 4: Draw image on canvas
+                const img = new Image();
+                img.onload = () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    // Step 5: Enable extract features button
+                    extractFeaturesButton.disabled = false;
+                };
+                img.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Step 6: Handle extract features button click
+        extractFeaturesButton.addEventListener('click', async () => {
+            // Step 7: Load OpenCV
+            const cv = await cvjs.load();
+            // Step 8: Load face cascade
+            const faceCascade = new cv.CascadeClassifier(cvjs.haarcascades.frontalface_default);
+                      // Step 9: Convert canvas to OpenCV matrix
+            const img = new cv.Mat();
+            cv.umd.read(ctx.getImageData(0, 0, canvas.width, canvas.height), img);
+
+            // Step 10: Convert image to grayscale
+            const gray = new cv.Mat();
+            cv.cvtColor(img, gray, cv.COLOR_RGBA2GRAY);
+
+            // Step 11: Detect faces
+            const faces = new cv.RectVector();
+            faceCascade.detectMultiScale(gray, faces);
+
+            // Step 12: Extract face region
+            const faceRect = faces.get(0);
+            const faceImg = img.roi(faceRect);
+
+            // Step 13: Resize face image
+            const alignedFace = new cv.Mat();
+            cv.resize(faceImg, alignedFace, new cv.Size(112, 112));
+
+            // Step 14: Load MobileFaceNet model
+            const tf = require('@tensorflow/tfjs');
+            const mobileFaceNet = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json');
+
+            // Step 15: Extract facial features
+            const tensor = tf.browser.fromPixels(alignedFace);
+            const inputs = tf.expandDims(tensor, 0);
+            const features = mobileFaceNet.predict(inputs);
+            const embedding = features.dataSync();
+
+            // Step 16: Display features
+            featuresOutput.innerText = `Features extracted: ${embedding.length} dimensions`;
+            console.log(embedding);
+
+            // Step 17: Release resources
+            img.delete();
+            gray.delete();
+            faceImg.delete();
+            alignedFace.delete();
+            tensor.dispose();
+            inputs.dispose();
+            features.dispose();
+        });
+    </script>
+</body>
+</html>
