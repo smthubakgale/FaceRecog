@@ -53,8 +53,8 @@
         // Step 6: Handle extract features button click
         extractFeaturesButton.addEventListener('click', async () => {
             // Step 7: Load OpenCV
-            console.log(window.cv);
-            const cv = await cv.load();
+            console.log(typeof(window.cv.CascadeClassifier));
+            const cv = window.cv;
             // Step 8: Load face cascade
             const faceCascade = new cv.CascadeClassifier(cvjs.haarcascades.frontalface_default);
             // Step 9: Convert canvas to OpenCV matrix
