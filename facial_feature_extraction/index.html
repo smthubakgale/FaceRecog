@@ -54,11 +54,9 @@
         extractFeaturesButton.addEventListener('click', async () => {
             // Step 7: Load OpenCV 
             const cv = window.cv;
-            // Step 8: Load face cascade
-            console.log(typeof(cv.CascadeClassifier)) 
-            console.log(typeof(cv.haarcascades)) 
-            console.log(typeof(cv.haarcascades.frontalFaceDefault))
-            const faceCascade = new cv.CascadeClassifier(cv.haarcascades.frontalFaceDefault);
+            // Step 8: Load face cascade 
+            const faceCascade = new cv.CascadeClassifier();
+            faceCascade.load('https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml');
             // Step 9: Convert canvas to OpenCV matrix
             const img = new cv.Mat();
             cv.umd.read(ctx.getImageData(0, 0, canvas.width, canvas.height), img);
