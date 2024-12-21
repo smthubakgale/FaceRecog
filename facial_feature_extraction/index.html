@@ -33,7 +33,7 @@
         // Step 2: Handle image input change
         imageInput.addEventListener('change', (e) => {
             // Step 3: Read selected image
-            const file = e.target.files;
+            const file = e.target.files[0];
             const reader = new FileReader();
             reader.onload = () => {
                 // Step 4: Draw image on canvas
