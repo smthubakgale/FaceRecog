@@ -55,9 +55,10 @@
             // Step 7: Load OpenCV 
             console.log(typeof(window.cv.haarcascades))
             console.log(typeof(window.cv.haarcascades.frontalface_default))
+            console.log(typeof(window.cv.haarcascades.frontalFaceDefault))
             const cv = window.cv;
             // Step 8: Load face cascade
-            const faceCascade = new cv.CascadeClassifier(cv.haarcascades.frontalface_default);
+            const faceCascade = new cv.CascadeClassifier(cv.haarcascades.frontalFaceDefault);
             // Step 9: Convert canvas to OpenCV matrix
             const img = new cv.Mat();
             cv.umd.read(ctx.getImageData(0, 0, canvas.width, canvas.height), img);
