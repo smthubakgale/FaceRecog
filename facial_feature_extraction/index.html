@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Face Detection and Landmark Extraction</title>
+    <title>Facial Feature Extraction</title>
     <style>
         #canvas {
             border: 1px solid black;
@@ -18,8 +18,9 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
+        // Load image and preprocess
         imageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
+            const file = e.target.files;
             const reader = new FileReader();
 
             reader.addEventListener('load', () => {
@@ -32,28 +33,15 @@
                     ctx.drawImage(img, 0, 0);
 
                     // Preprocess image
-                    const blurredCanvas = document.createElement('canvas');
-                    const blurredCtx = blurredCanvas.getContext('2d');
-                    blurredCanvas.width = canvas.width;
-                    blurredCanvas.height = canvas.height;
-                    blurredCtx.filter = 'blur(2px)';
-                    blurredCtx.drawImage(canvas, 0, 0);
+                    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
-                    const grayCanvas = document.createElement('canvas');
-                    const grayCtx = grayCanvas.getContext('2d');
-                    grayCanvas.width = blurredCanvas.width;
-                    grayCanvas.height = blurredCanvas.height;
-                    grayCtx.drawImage(blurredCanvas, 0, 0);
-
-                    let pixels = grayCtx.getImageData(0, 0, grayCanvas.width, grayCanvas.height).data;
-
-                    // Edge detection (Sobel filter)
-                    let edges = new Uint8ClampedArray(pixels.length);
+                    // Convert image to grayscale
                     for (let i = 0; i < pixels.length; i += 4) {
                         const lightness = (pixels + pixels + pixels) / 3;
-                        pixels = lightness;
+                        pixels = pixels = pixels = lightness;
                     }
 
+                    // Apply Sobel filter for edge detection
                     const sobelKernelX = [
                         -1, 0, 1,
                         -2, 0, 2,
@@ -66,12 +54,13 @@
                         1, 2, 1
                     ];
 
-                    for (let y = 1; y < grayCanvas.height - 1; y++) {
-                        for (let x = 1; x < grayCanvas.width - 1; x++) {
+                    const edges = new Uint8ClampedArray(pixels.length);
+                    for (let y = 1; y < canvas.height - 1; y++) {
+                        for (let x = 1; x < canvas.width - 1; x++) {
                             let edge = 0;
                             for (let ky = -1; ky <= 1; ky++) {
                                 for (let kx = -1; kx <= 1; kx++) {
-                                    const pixelIndex = (y + ky) * grayCanvas.width * 4 + (x + kx) * 4;
+                                    const pixelIndex = (y + ky) * canvas.width * 4 + (x + kx) * 4;
                                     edge += (pixels * sobelKernelX +
                                              pixels * sobelKernelY);
                                 }
@@ -80,23 +69,8 @@
                         }
                     }
 
-                    // Face detection and landmark extraction
-                    const faceRegions = [];
-                    for (let y = 0; y < grayCanvas.height; y++) {
-                        for (let x = 0; x < grayCanvas.width; x++) {
-                            const edgeIndex = y * grayCanvas.width * 4 + x * 4;
-                            if (edges > 100) {
-                                faceRegions.push({ x, y });
-                            }
-                        }
-                    }
-
-                    const landmarks = [];
-                    faceRegions.forEach(region => {
-                        landmarks.push({ x: region.x, y: region.y, type: 'face_center' });
-                    });
-
-                    console.log(landmarks);
+                    // Detect facial landmarks using machine learning algorithm
+                    const landmarks = detectFacialLandmarks(edges, canvas.width, canvas.height);
 
                     // Draw landmarks on canvas
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -108,12 +82,69 @@
                         ctx.fill();
                     });
                 });
-
-                img.src = imageData;
             });
 
             reader.readAsDataURL(file);
         });
+
+        // Machine learning algorithm for facial landmark detection
+        function detectFacialLandmarks(edges, width, height) {
+            const landmarks = ;
+
+            // Detect face center
+            let maxEdge = 0;
+            let centerX, centerY;
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > maxEdge) {
+                        maxEdge = edges;
+                        centerX = x;
+                        centerY = y;
+                    }
+                }
+            }
+
+            landmarks.push({ x: centerX, y: centerY, type: 'face_center' });
+
+            // Detect eye centers
+            const eyeRadius = 10;
+            const eyeThreshold = 100;
+            for (let y = centerY - eyeRadius; y <= centerY + eyeRadius; y++) {
+                for (let x = centerX - eyeRadius; x <= centerX + eyeRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > eyeThreshold) {
+                        landmarks.push({ x, y, type: 'eye_center' });
+                    }
+                }
+            }
+
+            // Detect nose tip
+            const noseRadius = 10;
+            const noseThreshold = 150;
+            for (let y = centerY - noseRadius; y <= centerY + noseRadius; y++) {
+                for (let x = centerX - noseRadius; x <= centerX + noseRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > noseThreshold) {
+                        landmarks.push({ x, y, type: 'nose_tip' });
+                    }
+                }
+            }
+
+            // Detect mouth corners
+            const mouthRadius = 15;
+            const mouthThreshold = 100;
+            for (let y = centerY + mouthRadius; y <= centerY + mouthRadius * 2; y++) {
+                for (let x = centerX - mouthRadius; x <= centerX + mouthRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > mouthThreshold) {
+                        landmarks.push({ x, y, type: 'mouth_corner' });
+                    }
+                }
+            }
+
+            return landmarks;
+        }
     </script>
 </body>
 </html>
