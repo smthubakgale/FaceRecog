@@ -68,8 +68,8 @@
 
             console.log(9);
             // Step 10: Convert matrix to image
-            const img = cv.cvtColor(mat, cv.COLOR_RGBA2RGB, 0);
-            console.log(img); 
+            const gray = cv.cvtColor(mat, cv.COLOR_RGBA2GRAY, cv.COLOR_RGB2GRAY);
+            console.log(gray); 
             console.log(9);
             // Step 10: Convert image to grayscale 
             const gray = cv.cvtColor(mat, cv.COLOR_RGBA2GRAY, 0);
