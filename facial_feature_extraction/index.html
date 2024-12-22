@@ -14,7 +14,7 @@
     <input type="file" id="imageInput" accept="image/*">
     <canvas id="canvas"></canvas>
     <script>
-        const imageInput = document.getElementById('file');
+        const imageInput = document.getElementById('imageInput');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
@@ -84,6 +84,7 @@
                         ctx.fill();
                     });
                 });
+                img.src = imageData;
             });
 
             reader.readAsDataURL(file);
