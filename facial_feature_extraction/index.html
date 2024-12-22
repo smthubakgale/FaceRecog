@@ -28,45 +28,13 @@
                 const img = new Image();
 
                 img.addEventListener('load', () => {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
+                    canvas.width = 256; //img.width;
+                    canvas.height = 256;/ img.height;
                     ctx.drawImage(img, 0, 0 );
                     setTimeout(() => {
                           // Preprocess image
                         let pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-
-                        // Resize to 256x256
-                        const resizedWidth = 256;
-                        const resizedHeight = 256;
-                        const resizedImageData = ctx.createImageData(resizedWidth, resizedHeight);
-                        let resizedPixels = new Uint8ClampedArray(resizedImageData.data.length);
-                        
-                        // Copy pixels to resized image data
-                        for (let y = 0; y < resizedHeight; y++) {
-                          for (let x = 0; x < resizedWidth; x++) {
-                            const originalX = Math.floor(x * canvas.width / resizedWidth);
-                            const originalY = Math.floor(y * canvas.height / resizedHeight);
-                            const originalIndex = (originalY * canvas.width + originalX) * 4;
-                            const resizedIndex = (y * resizedWidth + x) * 4;
-                            resizedPixels = pixels;
-                            resizedPixels = pixels;
-                            resizedPixels = pixels;
-                            resizedPixels = pixels;
-                          }
-                        }
-
-                        console.log(resizedPixels);
-                        
-                        // Update the canvas to display the resized image
-                        canvas.width = resizedWidth;
-                        canvas.height = resizedHeight;
-                        resizedImageData.data.set(resizedPixels);
-                        ctx.putImageData(resizedImageData, 0, 0);
-                        
-                        // Rest of your code remains the same
-    
-                        console.log(pixels);
-                        return;
+ 
                         // Convert image to grayscale
                         for (let i = 0; i < pixels.length; i += 4) {
                           const lightness = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
