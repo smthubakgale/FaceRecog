@@ -65,6 +65,8 @@
             // Step 9: Convert canvas to OpenCV matrix 
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const img = cv.matFromImageData(imageData);
+
+            console.log(img);
             drawImage(img);
             console.log(9);
             // Step 10: Convert image to grayscale 
