@@ -146,16 +146,14 @@
 
             features.push({ x: centerX, y: centerY, type: 'face_center' });
 
-            console.log(features);
-            return features;
             // Detect eye centers
             const eyeRadius = 10;
             const eyeThreshold = 100;
             for (let y = centerY - eyeRadius; y <= centerY + eyeRadius; y++) {
                 for (let x = centerX - eyeRadius; x <= centerX + eyeRadius; x++) {
                     const edgeIndex = y * width * 4 + x * 4;
-                    if (edges > eyeThreshold) {
-                        features.push({ x, y, type: 'eye_center' });
+                    if (edges[edgeIndex] > eyeThreshold) {
+                        features.push({ x:x , y:y , type: 'eye_center' });
                     }
                 }
             }
@@ -166,8 +164,8 @@
             for (let y = centerY - noseRadius; y <= centerY + noseRadius; y++) {
                 for (let x = centerX - noseRadius; x <= centerX + noseRadius; x++) {
                     const edgeIndex = y * width * 4 + x * 4;
-                    if (edges > noseThreshold) {
-                        features.push({ x, y, type: 'nose_tip' });
+                    if (edges[edgeIndex] > noseThreshold) {
+                        features.push({ x:x, y:y, type: 'nose_tip' });
                     }
                 }
             }
@@ -178,8 +176,8 @@
             for (let y = centerY + mouthRadius; y <= centerY + mouthRadius * 2; y++) {
                 for (let x = centerX - mouthRadius; x <= centerX + mouthRadius; x++) {
                     const edgeIndex = y * width * 4 + x * 4;
-                    if (edges > mouthThreshold) {
-                        features.push({ x, y, type: 'mouth_corner' });
+                    if (edges[edgeIndex] > mouthThreshold) {
+                        features.push({ x:x, y:y, type: 'mouth_corner' });
                     }
                 }
             }
@@ -190,8 +188,8 @@
             for (let y = centerY - eyebrowRadius; y <= centerY + eyebrowRadius; y++) {
                 for (let x = centerX - eyebrowRadius; x <= centerX + eyebrowRadius; x++) {
                     const edgeIndex = y * width * 4 + x * 4;
-                    if (edges > eyebrowThreshold) {
-                        features.push({ x, y, type: 'eyebrow_center' });
+                    if (edges[edgeIndex] > eyebrowThreshold) {
+                        features.push({ x:x, y:y, type: 'eyebrow_center' });
                     }
                 }
             }
@@ -202,8 +200,8 @@
             for (let y = centerY + lipRadius; y <= centerY + lipRadius * 2; y++) {
                 for (let x = centerX - lipRadius; x <= centerX + lipRadius; x++) {
                     const edgeIndex = y * width * 4 + x * 4;
-                    if (edges > lipThreshold) {
-                        features.push({ x, y, type: 'lip_contour' });
+                    if (edges[edgeIndex] > lipThreshold) {
+                        features.push({ x:x, y:y, type: 'lip_contour' });
                     }
                 }
             }
@@ -214,8 +212,8 @@
             for (let y = 0; y < height; y++) {
                 for (let x = 0; x < width; x++) {
                     const edgeIndex = y * width * 4 + x * 4;
-                    if (edges > facialContourThreshold) {
-                        features.push({ x, y, type: 'facial_contour' });
+                    if (edges[edgeIndex] > facialContourThreshold) {
+                        features.push({ x:x , y:y, type: 'facial_contour' });
                     }
                 }
             }
@@ -226,8 +224,8 @@
             for (let y = centerY - eyeContourRadius; y <= centerY + eyeContourRadius; y++) {
                 for (let x = centerX - eyeContourRadius; x <= centerX + eyeContourRadius; x++) {
                     const edgeIndex = y * width * 4 + x * 4;
-                    if (edges > eyeContourThreshold) {
-                        features.push({ x, y, type: 'eye_contour' });
+                    if (edges[edgeIndex] > eyeContourThreshold) {
+                        features.push({ x:x, y:y , type: 'eye_contour' });
                     }
                 }
             }
