@@ -79,7 +79,7 @@
                             	{
                             	  for (let x = 0; x < 3; x++) 
                             	  {
-                            		let pixel = pixels[i + (canvas.width * y) + x];
+                            		let pixel = pixels[i];
                             		let kernelAccessor = (x) * 3 + (y);
                             		hSum += pixel * sobel_h[kernelAccessor];
                             		vSum += pixel * sobel_v[kernelAccessor];
