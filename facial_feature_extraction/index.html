@@ -75,7 +75,7 @@
             // Step 11: Detect faces  
             const faces = new cv.RectVector();
             try{
-            faceCascade.detectMultiScale(gray, faces, 1.1, 3, 0);
+            faceCascade.detectMultiScale(gray, faces, 1.1, 3);
             }
             catch(e){
                 console.error(e);
