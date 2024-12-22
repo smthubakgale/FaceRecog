@@ -53,40 +53,62 @@
                         alert(pixels.length);
                         setTimeout(()=>
                         {
-                            // Apply Sobel filter for edge detection 
-                            const sobel_v =
-                            [
+                             // Define Sobel kernels for vertical and horizontal edge detection
+                            const sobelVKernel = [
                               -1.0, 0.0, +1.0,
                               -2.0, 0.0, +2.0,
                               -1.0, 0.0, +1.0
                             ];
                             
-                            const sobel_h =
-                            [
+                            const sobelHKernel = [
                               -1.0, -2.0, -1.0,
                                0.0,  0.0,  0.0,
                               +1.0, +2.0, +1.0
                             ];
                             
-                            let edges = new Uint8ClampedArray(pixels.length);
-                            console.log(edges);
+                            // Edge detection function
+                            function applySobelEdgeDetection(pixels) {
+                              const length = pixels.length;
+                              const width = Math.floor(Math.sqrt(length));
+                              const height = Math.floor(length / width);
                             
-                              for (let i = 0; i < pixels.length; i++) {
-                                // loop our 3x3 kernels, build our kernel values
+                              const edgeMap = new Float64Array(length);
+                            
+                              for (let i = 0; i < length; i++) {
+                                // Calculate pixel coordinates
+                                const x = i % width;
+                                const y = Math.floor(i / width);
+                            
+                                // Skip boundary pixels
+                                if (x === 0 || x === width - 1 || y === 0 || y === height - 1) {
+                                  edgeMap = 0;
+                                  continue;
+                                }
+                            
                                 let hSum = 0;
                                 let vSum = 0;
-                                for (let y = 0; y < 3; y++)
-                                  for (let x = 0; x < 3; x++) {
-                                    let pixel = pixels[i + (width * y) + x];
-                                    let kernelAccessor = (x) * 3 + (y);
-                                    hSum += pixel * sobel_h[kernelAccessor];
-                                    vSum += pixel * sobel_v[kernelAccessor];
+                            
+                                // Apply Sobel kernels
+                                for (let kernelY = 0; kernelY < 3; kernelY++) {
+                                  for (let kernelX = 0; kernelX < 3; kernelX++) {
+                                    const pixelIndex = (y + kernelY - 1) * width + (x + kernelX - 1);
+                                    const kernelIndex = kernelX * 3 + kernelY;
+                            
+                                    hSum += pixels * sobelHKernel;
+                                    vSum += pixels * sobelVKernel;
                                   }
-                                // apply kernel evaluation to current pixel
-                                edges[i] = Math.sqrt(hSum * hSum + vSum * vSum);
-                                // 
-                              };
-
+                                }
+                            
+                                // Calculate edge magnitude using hypot function for accuracy
+                                edgeMap = Math.hypot(hSum, vSum);
+                            
+                                // Normalize edge magnitude to  range
+                                edgeMap /= 255;
+                              }
+                            
+                              return edgeMap;
+                            }
+                            let edges = applySobelEdgeDetection(pixels);
                             console.log(edges);
                             // Update the canvas with the edges
                             const imageData = ctx.createImageData(canvas.width, canvas.height);
