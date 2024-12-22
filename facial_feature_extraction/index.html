@@ -222,7 +222,7 @@
         runtime: 'mediapipe',
         solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_detection',
       };
-      const detector = await faceDetection.createDetector(model, detectorConfig);
+      const detector = new FaceDetection.SupportedModels.MediaPipeFaceDetector(model, detectorConfig);
 
       return detector;
     }
