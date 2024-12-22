@@ -76,6 +76,7 @@
             const faceCascade = new cv.CascadeClassifier();
             faceCascade.load('https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml');
             const faces = new cv.RectVector();
+            console.log(faceCascade);
             faceCascade.detectMultiScale(
               gray, // image
               faces, // rects
