@@ -141,7 +141,6 @@
 
             features.push({ x: centerX, y: centerY, type: 'face_center' });
 
-            return features;
             // Detect eye centers
             const eyeRadius = 10;
             const eyeThreshold = 100;
@@ -154,6 +153,7 @@
                 }
             }
 
+            return features;
             // Detect nose tip
             const noseRadius = 10;
             const noseThreshold = 150;
