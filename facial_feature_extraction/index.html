@@ -67,17 +67,17 @@
             const img = cv.matFromImageData(imageData);
 
             console.log(9);
-            cv.imshow('img', img);
+            cv.imshow('canvas', img);
             // Step 10: Convert matrix to image  
             const gray = new cv.Mat();
             cv.cvtColor(img, gray, cv.COLOR_RGBA2GRAY, 0); 
 
             console.log(10);
-            cv.imshow('gray', gray);
+            cv.imshow('canvas', gray);
             // Apply Gaussian blur
             const blurred = cv.GaussianBlur(gray, new cv.Size(3, 3), 1.5, 1.5);
             console.log(blurred);
-            cv.imshow('blurred', blurred);
+            cv.imshow('canvas', blurred);
             //
             // Step 11: Detect faces  
             const faces = new cv.RectVector();
