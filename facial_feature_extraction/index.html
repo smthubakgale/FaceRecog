@@ -30,7 +30,8 @@
                 img.addEventListener('load', () => {
                     canvas.width = img.width;
                     canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0 , () => {
+                    ctx.drawImage(img, 0, 0 );
+                    setTimeout(() => {
                           // Preprocess image
                         let pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
     
@@ -86,7 +87,7 @@
                             ctx.arc(feature.x, feature.y, 2, 0, 2 * Math.PI);
                             ctx.fill();
                         });
-                    }); 
+                    } , 200); 
                 });
                 img.src = imageData;
             });
