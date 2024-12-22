@@ -159,7 +159,7 @@
               'Browser API navigator.mediaDevices.getUserMedia not available');
         }
 
-        const $size = VIDEO_SIZE;
+        const $size = VIDEO_SIZE[cameraParam.sizeOption];
         const videoConfig = {
           'audio': false,
           'video': {
@@ -208,7 +208,7 @@
 
         faces.forEach((face) => {
           const {topLeft, bottomRight} = face.boundingBox;
-          this.ctx.rect(topLeft, topLeft, bottomRight - topLeft, bottomRight - topLeft);
+          this.ctx.rect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
         });
 
         this.ctx.stroke();
@@ -217,8 +217,9 @@
 
     // Function to create detector
     async function createDetector() {
+      const model = await faceDetection.load();
       const detector = await faceDetection.SupportedModels.MediaPipeFaceDetection.create({
-        model: faceDetection.SupportedModels.MediaPipeFaceDetection.Models.full,
+        model: model,
       });
 
       return detector;
@@ -245,7 +246,6 @@
       // Setup stats
       stats = new Stats();
       stats.showPanel(0);
-      console.log(stats.domElement);
       document.getElementById('stats').appendChild(stats.domElement);
 
       // Setup camera
