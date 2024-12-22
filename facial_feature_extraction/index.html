@@ -37,8 +37,8 @@
 
                     // Convert image to grayscale
                     for (let i = 0; i < pixels.length; i += 4) {
-                        const lightness = (pixels + pixels + pixels) / 3;
-                        pixels = pixels = pixels = lightness;
+                      const lightness = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
+                      pixels[i] = pixels[i + 1] = pixels[i + 2] = lightness;
                     }
 
                     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
