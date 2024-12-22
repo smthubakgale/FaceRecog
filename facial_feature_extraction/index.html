@@ -1,267 +1,119 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0, user-scalable=no">
-  <style>
-    body {
-      margin: 0;
-    }
-
-    #stats {
-      position: relative;
-      width: 100%;
-      height: 80px;
-    }
-
-    #main {
-      position: relative;
-      margin: 0;
-    }
-
-    #canvas-wrapper {
-      position: relative;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Detection and Landmark Extraction</title>
+    <style>
+        #canvas {
+            border: 1px solid black;
+        }
+    </style>
 </head>
-
 <body>
-  <div id="stats"></div>
-  <div id="main">
-    <div class="container">
-      <div class="canvas-wrapper">
-        <canvas id="output"></canvas>
-        <video id="video" playsinline style="
-          -webkit-transform: scaleX(-1);
-          transform: scaleX(-1);
-          visibility: hidden;
-          width: auto;
-          height: auto;
-          ">
-        </video>
-      </div>
-    </div>
-  </div>
+    <input type="file" id="imageInput" accept="image/*">
+    <canvas id="canvas"></canvas>
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
 
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-detection"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files;
+            const reader = new FileReader();
 
-  <script>
-    // Constants
-    const VIDEO_SIZE = {
-      '360p': {width: 640, height: 360},
-      '480p': {width: 640, height: 480},
-      '720p': {width: 1280, height: 720},
-    };
+            reader.addEventListener('load', () => {
+                const imageData = reader.result;
+                const img = new Image();
 
-    const STATE = {
-      camera: {
-        targetFPS: 30,
-        sizeOption: '480p',
-      },
-      isTargetFPSChanged: false,
-      isSizeOptionChanged: false,
-    };
+                img.addEventListener('load', () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
 
-    // Variables
-    let detector, camera, stats;
-    let startInferenceTime, numInferences = 0;
-    let inferenceTimeSum = 0, lastPanelUpdate = 0;
-    let rafId;
+                    // Preprocess image
+                    const blurredCanvas = document.createElement('canvas');
+                    const blurredCtx = blurredCanvas.getContext('2d');
+                    blurredCanvas.width = canvas.width;
+                    blurredCanvas.height = canvas.height;
+                    blurredCtx.filter = 'blur(2px)';
+                    blurredCtx.drawImage(canvas, 0, 0);
 
-    // Function to check for GUI updates
-    async function checkGuiUpdate() {
-      if (STATE.isTargetFPSChanged || STATE.isSizeOptionChanged) {
-        camera = await Camera.setupCamera(STATE.camera);
-        STATE.isTargetFPSChanged = false;
-        STATE.isSizeOptionChanged = false;
-      }
-    }
+                    const grayCanvas = document.createElement('canvas');
+                    const grayCtx = grayCanvas.getContext('2d');
+                    grayCanvas.width = blurredCanvas.width;
+                    grayCanvas.height = blurredCanvas.height;
+                    grayCtx.drawImage(blurredCanvas, 0, 0);
 
-    // Function to begin estimating face stats
-    function beginEstimateFaceStats() {
-      startInferenceTime = performance.now();
-    }
+                    const pixels = grayCtx.getImageData(0, 0, grayCanvas.width, grayCanvas.height).data;
 
-    // Function to end estimating face stats
-    function endEstimateFaceStats() {
-      const endInferenceTime = performance.now();
-      inferenceTimeSum += endInferenceTime - startInferenceTime;
-      ++numInferences;
+                    // Edge detection (Sobel filter)
+                    const edges = new Uint8ClampedArray(pixels.length);
+                    for (let i = 0; i < pixels.length; i += 4) {
+                        const lightness = (pixels + pixels + pixels) / 3;
+                        pixels = pixels = pixels = lightness;
+                    }
 
-      const panelUpdateMilliseconds = 1000;
-      if (endInferenceTime - lastPanelUpdate >= panelUpdateMilliseconds) {
-        const averageInferenceTime = inferenceTimeSum / numInferences;
-        inferenceTimeSum = 0;
-        numInferences = 0;
-        stats.customFpsPanel.update(
-            1000.0 / averageInferenceTime, 120 /* maxValue */);
-        lastPanelUpdate = endInferenceTime;
-      }
-    }
+                    const sobelKernelX = [
+                        -1, 0, 1,
+                        -2, 0, 2,
+                        -1, 0, 1
+                    ];
 
-    // Function to render result
-    async function renderResult() {
-      if (camera.video.readyState < 2) {
-        await new Promise((resolve) => {
-          camera.video.onloadeddata = () => {
-            resolve(video);
-          };
+                    const sobelKernelY = [
+                        -1, -2, -1,
+                        0, 0, 0,
+                        1, 2, 1
+                    ];
+
+                    for (let y = 1; y < grayCanvas.height - 1; y++) {
+                        for (let x = 1; x < grayCanvas.width - 1; x++) {
+                            let edge = 0;
+                            for (let ky = -1; ky <= 1; ky++) {
+                                for (let kx = -1; kx <= 1; kx++) {
+                                    const pixelIndex = (y + ky) * grayCanvas.width * 4 + (x + kx) * 4;
+                                    edge += (pixels * sobelKernelX +
+                                             pixels * sobelKernelY);
+                                }
+                            }
+                            edges = Math.abs(edge);
+                        }
+                    }
+
+                    // Face detection and landmark extraction
+                    const faceRegions = ;
+                    for (let y = 0; y < grayCanvas.height; y++) {
+                        for (let x = 0; x < grayCanvas.width; x++) {
+                            const edgeIndex = y * grayCanvas.width * 4 + x * 4;
+                            if (edges > 100) {
+                                faceRegions.push({ x, y });
+                            }
+                        }
+                    }
+
+                    const landmarks = ;
+                    faceRegions.forEach(region => {
+                        landmarks.push({ x: region.x, y: region.y, type: 'face_center' });
+                    });
+
+                    console.log(landmarks);
+
+                    // Draw landmarks on canvas
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    ctx.fillStyle = 'red';
+                    landmarks.forEach(landmark => {
+                        ctx.beginPath();
+                        ctx.arc(landmark.x, landmark.y, 2, 0, 2 * Math.PI);
+                        ctx.fill();
+                    });
+                });
+
+                img.src = imageData;
+            });
+
+            reader.readAsDataURL(file);
         });
-      }
-
-      let faces = null;
-
-      if (detector != null) {
-        beginEstimateFaceStats();
-
-        try {
-          faces = await detector.estimateFaces(camera.video, {flipHorizontal: false});
-        } catch (error) {
-          detector.dispose();
-          detector = null;
-          alert(error);
-        }
-
-        endEstimateFaceStats();
-      }
-
-      camera.drawCtx();
-
-      if (faces && faces.length > 0) {
-        camera.drawResults(faces);
-      }
-    }
-
-    // Function to render prediction
-    async function renderPrediction() {
-      await checkGuiUpdate();
-
-      await renderResult();
-
-      rafId = requestAnimationFrame(renderPrediction);
-    }
-
-    // Camera class
-    class Camera {
-      constructor() {
-        this.video = document.getElementById('video');
-        this.canvas = document.getElementById('output');
-        this.ctx = this.canvas.getContext('2d');
-      }
-
-      static async setupCamera(cameraParam) {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          throw new Error(
-              'Browser API navigator.mediaDevices.getUserMedia not available');
-        }
-
-        const $size = VIDEO_SIZE[cameraParam.sizeOption];
-        const videoConfig = {
-          'audio': false,
-          'video': {
-            facingMode: 'user',
-            width: $size.width,
-            height: $size.height,
-            frameRate: {
-              ideal: cameraParam.targetFPS,
-            },
-          },
-        };
-
-        const stream = await navigator.mediaDevices.getUserMedia(videoConfig);
-
-        const camera = new Camera();
-        camera.video.srcObject = stream;
-
-        await new Promise((resolve) => {
-          camera.video.onloadedmetadata = () => {
-            resolve(video);
-          };
-        });
-
-        camera.video.play();
-
-        const videoWidth = camera.video.videoWidth;
-        const videoHeight = camera.video.videoHeight;
-        camera.video.width = videoWidth;
-        camera.video.height = videoHeight;
-
-        camera.canvas.width = videoWidth;
-        camera.canvas.height = videoHeight;
-
-        return camera;
-      }
-
-      drawCtx() {
-        this.ctx.drawImage(
-            this.video, 0, 0, this.video.videoWidth, this.video.videoHeight);
-      }
-
-      drawResults(faces) {
-        this.ctx.beginPath();
-        this.ctx.lineWidth = 2;
-        this.ctx.strokeStyle = 'red';
-
-        faces.forEach((face) => {
-          const {topLeft, bottomRight} = face.boundingBox;
-          this.ctx.rect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
-        });
-
-        this.ctx.stroke();
-      }
-    }
-
-    // Function to create detector
-    async function createDetector() {
-      const model = faceDetection.SupportedModels.MediaPipeFaceDetector;
-      const detectorConfig = {
-        runtime: 'mediapipe',
-        solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_detection',
-      };
-      const detector = new faceDetection.SupportedModels.MediaPipeFaceDetector(model, detectorConfig);
-
-      return detector;
-    }
-
-    // Initialize the app
-    async function app() {
-      // Setup GUI
-      const gui = new dat.GUI({width: 300});
-      gui.domElement.id = 'gui';
-
-      const cameraFolder = gui.addFolder('Camera');
-      const fpsController = cameraFolder.add(STATE.camera, 'targetFPS');
-      fpsController.onFinishChange((_) => {
-        STATE.isTargetFPSChanged = true;
-      });
-      const sizeController = cameraFolder.add(
-          STATE.camera, 'sizeOption', Object.keys(VIDEO_SIZE));
-      sizeController.onChange(_ => {
-        STATE.isSizeOptionChanged = true;
-      });
-      cameraFolder.open();
-
-      // Setup stats
-      stats = new Stats();
-      stats.showPanel(0);
-      document.getElementById('stats').appendChild(stats.domElement);
-
-      // Setup camera
-      camera = await Camera.setupCamera(STATE.camera);
-
-      // Setup detector
-      detector = await createDetector();
-
-      // Start rendering
-      renderPrediction();
-    }
-
-    // Initialize the app
-    app();
-  </script>
+    </script>
 </body>
 </html>
