@@ -23,6 +23,12 @@
     <script src="https://docs.opencv.org/4.5.4/opencv.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script> 
     <script>
+        // Load Face Detection Model
+        let model;
+        async function loadModel() {
+            model = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/face_detection/model.json');
+        }
+        loadModel();
         // Step 1: Get input elements
         const imageInput = document.getElementById('imageInput');
         const canvas = document.getElementById('canvas');
@@ -72,50 +78,50 @@
             console.log(10);
             cv.imshow('canvas', gray); 
             //
-            // Step 11: Detect faces
-            const faceCascade = new cv.CascadeClassifier();
-            faceCascade.load('https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml');
-            const faces = new cv.RectVector();
-            console.log(faceCascade);
-            console.log(gray);
-            faceCascade.detectMultiScale(
-              gray, // image
-              faces, // rects
-              1.1, // scaleFactor
-              3, // minNeighbors
-              cv.CASCADE_DO_CANNY_PRUNING, // flags
-              new cv.Size(30, 30), // minSize
-              new cv.Size(100, 100) // maxSize
-            );
-            console.log(11, faces);
-            // Step 12: Extract face region
-            const faceRect = faces.get(0);
-            const faceImg = img.roi(faceRect);
+            // Step 11: Extract face region
+            const extractFaceRegion = async (img) => {
+                // Preprocess image
+                const imgTensor = tf.browser.fromPixels(img);
+                const resizedImg = tf.image.resizeBilinear(imgTensor, [160, 160]);
+                const normalizedImg = resizedImg.toFloat().div(255);
 
-            console.log(12);
-            // Step 13: Resize face image
-            const alignedFace = new cv.Mat();
-            cv.resize(faceImg, alignedFace, new cv.Size(112, 112));
+                // Extract face region
+                const faceRegion = normalizedImg.slice([0, 0, 0], [160, 160, 3]);
 
-            console.log(13);
-            // Step 14: Load MobileFaceNet model
-            const tf = require('@tensorflow/tfjs');
-            const mobileFaceNet = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json');
+                return faceRegion;
+            };
 
-            console.log(14);
-            // Step 15: Extract facial features
-            const tensor = tf.browser.fromPixels(alignedFace);
-            const inputs = tf.expandDims(tensor, 0);
-            const features = mobileFaceNet.predict(inputs);
-            const embedding = features.dataSync();
+            const faceRegion = await extractFaceRegion(imgElement);
+            // Step 12: Resize face image
+            const resizeFaceImage = async (faceRegion) => {
+                // Resize face image
+                const resizedFaceImage = tf.image.resizeBilinear(faceRegion, [112, 112]);
 
-            console.log(15);
-            // Step 16: Display features
-            featuresOutput.innerText = `Features extracted: ${embedding.length} dimensions`;
-            console.log(embedding);
+                return resizedFaceImage;
+            };
 
+            // Step 13: Load MobileFaceNet model
+            const mobileFaceNetModel = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet/model.json');
 
-            console.log(16);
+            // Step 14: Extract facial features
+            const extractFacialFeatures = async (resizedFaceImage) => {
+                // Extract facial features
+                const features = mobileFaceNetModel.predict(resizedFaceImage.expandDims(0));
+
+                return features;
+            };
+
+            // Step 15: Display features
+            const displayFeatures = async (features) => {
+                // Display features
+                console.log(features);
+            };
+
+            // Usage
+            const resizedFaceImage = await resizeFaceImage(faceRegion);
+            const features = await extractFacialFeatures(resizedFaceImage);
+            await displayFeatures(features);
+            
             // Step 17: Release resources
             img.delete();
             gray.delete();
