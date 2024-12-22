@@ -218,9 +218,11 @@
     // Function to create detector
     async function createDetector() {
       const model = faceDetection.SupportedModels.MediaPipeFaceDetector;
-      const detector = await faceDetection.createDetector(model, {
-        runtime: 'tfjs',
-      });
+      const detectorConfig = {
+        runtime: 'mediapipe',
+        solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_detection',
+      };
+      const detector = await faceDetection.createDetector(model, detectorConfig);
 
       return detector;
     }
