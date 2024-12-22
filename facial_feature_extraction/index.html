@@ -49,43 +49,42 @@
                         imageData.data.set(pixels);
                         ctx.putImageData(imageData, 0, 0);
                         alert("A") ;  
+                        alert(pixels.length);
                         setTimeout(()=>
                         {
                             // Apply Sobel filter for edge detection 
-                            const sobelKernelX = [
-                              -1, 0, 1,
-                              -2, 0, 2,
-                              -1, 0, 1
+                            const sobel_v =
+                            [
+                              -1.0, 0.0, +1.0,
+                              -2.0, 0.0, +2.0,
+                              -1.0, 0.0, +1.0
                             ];
                             
-                            const sobelKernelY = [
-                              -1, -2, -1,
-                              0, 0, 0,
-                              1, 2, 1
+                            const sobel_h =
+                            [
+                              -1.0, -2.0, -1.0,
+                               0.0,  0.0,  0.0,
+                              +1.0, +2.0, +1.0
                             ];
                             
                             let edges = new Uint8ClampedArray(pixels.length);
                             console.log(edges);
                             
-                            for (let y = 1; y < canvas.height - 1; y++) {
-                              for (let x = 1; x < canvas.width - 1; x++) {
-                                let edgeX = 0;
-                                let edgeY = 0;
-                                for (let i = 0; i < 9; i++) {
-                                  const ky = Math.floor(i / 3) - 1;
-                                  const kx = i % 3 - 1;
-                                  const pixelIndex = ((y + ky) * canvas.width + (x + kx)) * 4;
-                                  edgeX += pixels * sobelKernelX;
-                                  edgeY += pixels * sobelKernelY;
-                                }
-                                const edge = Math.hypot(edgeX, edgeY);
-                                const index = (y * canvas.width + x) * 4;
-                                edges = edge;
-                                edges = edge;
-                                edges = edge;
-                                edges = 255;
-                              }
-                            }
+                              for (let i = 0; i < pixels.length; i++) {
+                                // loop our 3x3 kernels, build our kernel values
+                                let hSum = 0;
+                                let vSum = 0;
+                                for (let y = 0; y < 3; y++)
+                                  for (let x = 0; x < 3; x++) {
+                                    let pixel = pixels[i + (width * y) + x];
+                                    let kernelAccessor = (x) * 3 + (y);
+                                    hSum += pixel * sobel_h[kernelAccessor];
+                                    vSum += pixel * sobel_v[kernelAccessor];
+                                  }
+                                // apply kernel evaluation to current pixel
+                                edges[i] = Math.sqrt(hSum * hSum + vSum * vSum);
+                                // 
+                              };
 
                             console.log(edges);
                             // Update the canvas with the edges
