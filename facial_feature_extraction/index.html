@@ -103,8 +103,8 @@
                                 console.log(features);
             
                                 // Draw features on canvas
-                                ctx.clearRect(0, 0, 0, 0,canvas.width, canvas.height, 0, 0, 256, 256);
-                                ctx.drawImage(img, 0, 0);
+                                ctx.clearRect(0, 0, canvas.width, canvas.height, 0, 0, 256, 256);
+                                ctx.drawImage(img, 0, 0,canvas.width, canvas.height, 0, 0, 256, 256);
                                 ctx.fillStyle = 'red';
                                 features.forEach(feature => {
                                     ctx.beginPath();
