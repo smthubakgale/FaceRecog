@@ -91,7 +91,23 @@
                             // Detect facial features
                             console.log(edges);
                             //alert("B");
-                             
+                            // Load FaceNet Model
+                            const faceNetModel = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/facenet/model.json');
+                            
+                            // Preprocess Image
+                            const imgTensor = tf.browser.fromPixels(edges);
+                            const resizedImg = tf.image.resizeBilinear(imgTensor, [160, 160]);
+                            const normalizedImg = resizedImg.toFloat().div(255);
+                            
+                            // Extract Facial Features
+                            const embedding = faceNetModel.predict(normalizedImg.expandDims(0));
+                            
+                            // Postprocess Features
+                            const features = embedding.dataSync();
+                            
+                            // Display Features
+                            console.log(features);
+                             return;
                             setTimeout(()=>
                             {
                                 const features = detectFacialFeatures(edges, canvas.width, canvas.height);
