@@ -72,6 +72,8 @@
                     // Detect facial features
                     const features = detectFacialFeatures(edges, canvas.width, canvas.height);
 
+                    console.log(features);
+
                     // Draw features on canvas
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.drawImage(img, 0, 0);
