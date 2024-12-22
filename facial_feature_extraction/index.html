@@ -42,6 +42,10 @@
                         }
                             
                         console.log(pixels);
+                        // Update the existing canvas with the grayscale image data
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        imageData.data.set(pixels);
+                        ctx.putImageData(imageData, 0, 0);
                         alert("A") ; 
                         // Apply Sobel filter for edge detection
                         const sobelKernelX = [
