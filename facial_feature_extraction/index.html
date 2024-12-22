@@ -245,7 +245,8 @@
       // Setup stats
       stats = new Stats();
       stats.showPanel(0);
-      //document.getElementById('stats').appendChild(stats.dom);
+      console.log(stats.domElement);
+      document.getElementById('stats').appendChild(stats.domElement);
 
       // Setup camera
       camera = await Camera.setupCamera(STATE.camera);
