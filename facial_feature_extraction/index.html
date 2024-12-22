@@ -13,53 +13,79 @@
 <body>
     <input type="file" id="imageInput" accept="image/*">
     <canvas id="canvas"></canvas>
-    <script src="https://cdn.jsdelivr.net/npm/face-api@0.22.2/dist/face-api.min.js"></script>
     <script>
-        // Get input and canvas elements
         const imageInput = document.getElementById('imageInput');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
         // Load image and preprocess
-        imageInput.addEventListener('change', async (e) => {
+        imageInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             const reader = new FileReader();
 
-            reader.addEventListener('load', async () => {
+            reader.addEventListener('load', () => {
                 const imageData = reader.result;
                 const img = new Image();
 
-                img.addEventListener('load', async () => {
-                    // Set canvas dimensions
+                img.addEventListener('load', () => {
                     canvas.width = img.width;
                     canvas.height = img.height;
-                    // Draw image on canvas
                     ctx.drawImage(img, 0, 0);
 
+                    // Preprocess image
+                    let pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+                    // Convert image to grayscale
+                    for (let i = 0; i < pixels.length; i += 4) {
+                        const lightness = (pixels + pixels + pixels) / 3;
+                        pixels = pixels = pixels = lightness;
+                    }
+
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    imageData.data.set(pixels);
+                    ctx.putImageData(imageData, 0, 0);
+                    // Apply Sobel filter for edge detection
+                    const sobelKernelX = [
+                        -1, 0, 1,
+                        -2, 0, 2,
+                        -1, 0, 1
+                    ];
+
+                    const sobelKernelY = [
+                        -1, -2, -1,
+                        0, 0, 0,
+                        1, 2, 1
+                    ];
+
+                    let edges = new Uint8ClampedArray(pixels.length);
+                    for (let y = 1; y < canvas.height - 1; y++) {
+                        for (let x = 1; x < canvas.width - 1; x++) {
+                            let edge = 0;
+                            for (let ky = -1; ky <= 1; ky++) {
+                                for (let kx = -1; kx <= 1; kx++) {
+                                    const pixelIndex = (y + ky) * canvas.width * 4 + (x + kx) * 4;
+                                    edge += (pixels * sobelKernelX +
+                                             pixels * sobelKernelY);
+                                }
+                            }
+                            edges = Math.abs(edge);
+                        }
+                    }
+
                     // Detect facial features
-                    const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
+                    console.log(edges);
+                    const features = detectFacialFeatures(edges, canvas.width, canvas.height);
+
+                    console.log(features);
 
                     // Draw features on canvas
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.drawImage(img, 0, 0);
-                    detections.forEach(detection => {
-                        const landmarks = detection.landmarks;
-                        const descriptor = detection.descriptor;
-                        const box = detection.detection.box;
-
-                        // Draw face box
+                    ctx.fillStyle = 'red';
+                    features.forEach(feature => {
                         ctx.beginPath();
-                        ctx.rect(box.x, box.y, box.width, box.height);
-                        ctx.strokeStyle = 'red';
-                        ctx.stroke();
-
-                        // Draw facial features
-                        landmarks.forEach(landmark => {
-                            ctx.beginPath();
-                            ctx.arc(landmark.x, landmark.y, 2, 0, 2 * Math.PI);
-                            ctx.fillStyle = 'red';
-                            ctx.fill();
-                        });
+                        ctx.arc(feature.x, feature.y, 2, 0, 2 * Math.PI);
+                        ctx.fill();
                     });
                 });
                 img.src = imageData;
@@ -67,6 +93,113 @@
 
             reader.readAsDataURL(file);
         });
+
+        // Machine learning algorithm for facial feature detection
+        function detectFacialFeatures(edges, width, height) {
+            const features = [];
+
+            // Detect face center
+            let maxEdge = 0;
+            let centerX, centerY;
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > maxEdge) {
+                        maxEdge = edges;
+                        centerX = x;
+                        centerY = y;
+                    }
+                }
+            }
+
+            features.push({ x: centerX, y: centerY, type: 'face_center' });
+
+            // Detect eye centers
+            const eyeRadius = 10;
+            const eyeThreshold = 100;
+            for (let y = centerY - eyeRadius; y <= centerY + eyeRadius; y++) {
+                for (let x = centerX - eyeRadius; x <= centerX + eyeRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > eyeThreshold) {
+                        features.push({ x, y, type: 'eye_center' });
+                    }
+                }
+            }
+
+            // Detect nose tip
+            const noseRadius = 10;
+            const noseThreshold = 150;
+            for (let y = centerY - noseRadius; y <= centerY + noseRadius; y++) {
+                for (let x = centerX - noseRadius; x <= centerX + noseRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > noseThreshold) {
+                        features.push({ x, y, type: 'nose_tip' });
+                    }
+                }
+            }
+
+            // Detect mouth corners
+            const mouthRadius = 15;
+            const mouthThreshold = 100;
+            for (let y = centerY + mouthRadius; y <= centerY + mouthRadius * 2; y++) {
+                for (let x = centerX - mouthRadius; x <= centerX + mouthRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > mouthThreshold) {
+                        features.push({ x, y, type: 'mouth_corner' });
+                    }
+                }
+            }
+
+            // Detect eyebrow centers
+            const eyebrowRadius = 10;
+            const eyebrowThreshold = 120;
+            for (let y = centerY - eyebrowRadius; y <= centerY + eyebrowRadius; y++) {
+                for (let x = centerX - eyebrowRadius; x <= centerX + eyebrowRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > eyebrowThreshold) {
+                        features.push({ x, y, type: 'eyebrow_center' });
+                    }
+                }
+            }
+
+            // Detect lip contours
+            const lipRadius = 10;
+            const lipThreshold = 80;
+            for (let y = centerY + lipRadius; y <= centerY + lipRadius * 2; y++) {
+                for (let x = centerX - lipRadius; x <= centerX + lipRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > lipThreshold) {
+                        features.push({ x, y, type: 'lip_contour' });
+                    }
+                }
+            }
+
+            // Detect facial contours
+            const facialContourRadius = 20;
+            const facialContourThreshold = 150;
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > facialContourThreshold) {
+                        features.push({ x, y, type: 'facial_contour' });
+                    }
+                }
+            }
+
+            // Detect eye contours
+            const eyeContourRadius = 5;
+            const eyeContourThreshold = 100;
+            for (let y = centerY - eyeContourRadius; y <= centerY + eyeContourRadius; y++) {
+                for (let x = centerX - eyeContourRadius; x <= centerX + eyeContourRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > eyeContourThreshold) {
+                        features.push({ x, y, type: 'eye_contour' });
+                    }
+                }
+            }
+
+            return features;
+        }
     </script>
 </body>
 </html>
