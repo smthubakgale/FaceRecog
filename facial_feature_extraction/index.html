@@ -49,8 +49,8 @@
                         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                         imageData.data.set(pixels);
                         ctx.putImageData(imageData, 0, 0);
-                        alert("A") ;  
-                        alert(pixels.length);
+                        //alert("A") ;  
+                        //alert(pixels.length);
                         setTimeout(()=>
                         {
                             const sobel_v =
@@ -95,7 +95,7 @@
                             ctx.putImageData(imageData, 0, 0);
                             // Detect facial features
                             console.log(edges);
-                            alert("B");
+                            //alert("B");
 
                             setTimeout(()=>
                             {
@@ -104,9 +104,9 @@
                                 console.log(features);
             
                                 // Draw features on canvas
-                                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                                imageData.data.set(original);
-                                ctx.putImageData(imageData, 0, 0);
+                                //const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                                //imageData.data.set(original);
+                                //ctx.putImageData(imageData, 0, 0);
                                         
                                 //ctx.clearRect(0, 0, canvas.width, canvas.height, 0, 0, 256, 256); 
                                 ctx.fillStyle = 'red';
