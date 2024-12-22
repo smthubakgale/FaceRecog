@@ -49,7 +49,7 @@
                         alert("A") ;  
                         setTimeout(()=>
                         {
-                            // Apply Sobel filter for edge detection
+                            // Apply Sobel filter for edge detection 
                             const sobelKernelX = [
                               -1, 0, 1,
                               -2, 0, 2,
@@ -70,13 +70,25 @@
                                 for (let ky = -1; ky <= 1; ky++) {
                                   for (let kx = -1; kx <= 1; kx++) {
                                     const pixelIndex = ((y + ky) * canvas.width + (x + kx)) * 4;
-                                    edgeX += pixels * sobelKernelX;
-                                    edgeY += pixels * sobelKernelY;
+                                    const intensity = (pixels + pixels + pixels) / 3;
+                                    
+                                    edgeX += intensity * sobelKernelX;
+                                    edgeY += intensity * sobelKernelY;
                                   }
                                 }
-                                edges = Math.max(Math.abs(edgeX), Math.abs(edgeY));
+                                const edge = Math.max(Math.abs(edgeX), Math.abs(edgeY));
+                                const index = (y * canvas.width + x) * 4;
+                                edges = edge; // red
+                                edges = edge; // green
+                                edges = edge; // blue
+                                edges = 255; // alpha
                               }
                             }
+                            
+                            // Update the canvas with the edges
+                            const imageData = ctx.createImageData(canvas.width, canvas.height);
+                            imageData.data.set(edges);
+                            ctx.putImageData(imageData, 0, 0);
                             // Detect facial features
                             console.log(edges);
                             alert("B");
