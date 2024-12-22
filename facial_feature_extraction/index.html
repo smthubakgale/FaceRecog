@@ -108,8 +108,16 @@
                                 //ctx.putImageData(imageData, 0, 0);
                                         
                                 //ctx.clearRect(0, 0, canvas.width, canvas.height, 0, 0, 256, 256); 
-                                ctx.fillStyle = 'red';
+                                const colorMap = {
+                                  eye_center: 'red',
+                                  eyebrow_center : 'green',
+                                  nose_tip : 'blue',
+                                  mouth_corner: 'yellow',
+                                };
+                                
                                 features.forEach(feature => {
+                                    ctx.fillStyle = colorMap[feature.type] ? colorMap[feature.type] : 'purple';
+                                    
                                     ctx.beginPath();
                                     ctx.arc(feature.x, feature.y, 2, 0, 2 * Math.PI);
                                     ctx.fill();
