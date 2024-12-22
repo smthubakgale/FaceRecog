@@ -34,12 +34,12 @@
                     setTimeout(() => {
                           // Preprocess image
                         let pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-                        
+
                         // Resize to 256x256
                         const resizedWidth = 256;
                         const resizedHeight = 256;
                         const resizedImageData = ctx.createImageData(resizedWidth, resizedHeight);
-                        const resizedPixels = resizedImageData.data;
+                        let resizedPixels = new Uint8ClampedArray(resizedImageData.data.length);
                         
                         // Copy pixels to resized image data
                         for (let y = 0; y < resizedHeight; y++) {
@@ -55,15 +55,11 @@
                           }
                         }
                         
-                        // Update pixels to point to the resized image data
-                        pixels = resizedPixels;
-                        
                         // Update the canvas to display the resized image
                         canvas.width = resizedWidth;
                         canvas.height = resizedHeight;
-                        const edgeImageData = ctx.createImageData(resizedWidth, resizedHeight);
-                        edgeImageData.data.set(pixels);
-                        ctx.putImageData(edgeImageData, 0, 0);
+                        resizedImageData.data.set(resizedPixels);
+                        ctx.putImageData(resizedImageData, 0, 0);
                         
                         // Rest of your code remains the same
     
