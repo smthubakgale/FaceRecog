@@ -48,7 +48,7 @@
                     let pixels = grayCtx.getImageData(0, 0, grayCanvas.width, grayCanvas.height).data;
 
                     // Edge detection (Sobel filter)
-                    const edges = new Uint8ClampedArray(pixels.length);
+                    let edges = new Uint8ClampedArray(pixels.length);
                     for (let i = 0; i < pixels.length; i += 4) {
                         const lightness = (pixels + pixels + pixels) / 3;
                         pixels = lightness;
