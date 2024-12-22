@@ -45,13 +45,13 @@
                     grayCanvas.height = blurredCanvas.height;
                     grayCtx.drawImage(blurredCanvas, 0, 0);
 
-                    const pixels = grayCtx.getImageData(0, 0, grayCanvas.width, grayCanvas.height).data;
+                    let pixels = grayCtx.getImageData(0, 0, grayCanvas.width, grayCanvas.height).data;
 
                     // Edge detection (Sobel filter)
                     const edges = new Uint8ClampedArray(pixels.length);
                     for (let i = 0; i < pixels.length; i += 4) {
                         const lightness = (pixels + pixels + pixels) / 3;
-                        pixels = pixels = pixels = lightness;
+                        pixels = lightness;
                     }
 
                     const sobelKernelX = [
