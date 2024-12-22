@@ -28,9 +28,9 @@
                 const img = new Image();
 
                 img.addEventListener('load', () => {
-                    canvas.width = 256;
-                    canvas.height = 256;
-                    ctx.drawImage(img, 0, 0 ,img.width, img.height, 0, 0, 256, 256);
+                    canvas.width = img.width; //256;
+                    canvas.height = img.height; //256;
+                    ctx.drawImage(img, 0, 0); // ,img.width, img.height, 0, 0, 256, 256);
 
                     setTimeout(() => 
                     { 
@@ -77,7 +77,7 @@
                             	{
                             	  for (let x = 0; x < 3; x++) 
                             	  {
-                            		let pixel = pixels[i + (Math.sqrt(pixels.length) * y) + x];
+                            		let pixel = pixels[i + (canvas.with * y) + x];
                             		let kernelAccessor = (x) * 3 + (y);
                             		hSum += pixel * sobel_h[kernelAccessor];
                             		vSum += pixel * sobel_v[kernelAccessor];
