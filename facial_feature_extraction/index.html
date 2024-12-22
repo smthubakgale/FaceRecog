@@ -20,7 +20,7 @@
 
         // Load image and preprocess
         imageInput.addEventListener('change', (e) => {
-            const file = e.target.files;
+            const file = e.target.files[0];
             const reader = new FileReader();
 
             reader.addEventListener('load', () => {
