@@ -39,9 +39,7 @@
                 // Step 4: Draw image on canvas
                 const img = new Image();
                 img.onload = () => {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
+                    drawImage(img);
                     // Step 5: Enable extract features button
                     extractFeaturesButton.disabled = false;
                 };
@@ -49,6 +47,12 @@
             };
             reader.readAsDataURL(file);
         });
+
+        function drawImage(img){
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+        }
 
         // Step 6: Handle extract features button click
         extractFeaturesButton.addEventListener('click', async () => {
@@ -61,7 +65,7 @@
             // Step 9: Convert canvas to OpenCV matrix 
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const img = cv.matFromImageData(imageData);
-
+            drawImage(img);
             console.log(9);
             // Step 10: Convert image to grayscale 
             const gray = cv.cvtColor(img, cv.COLOR_RGBA2GRAY);
