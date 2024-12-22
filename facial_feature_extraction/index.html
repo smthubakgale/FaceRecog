@@ -81,7 +81,7 @@
                             
                                 // Skip boundary pixels
                                 if (x === 0 || x === width - 1 || y === 0 || y === height - 1) {
-                                  edgeMap = 0;
+                                  edgeMap[i] = 0;
                                   continue;
                                 }
                             
@@ -94,16 +94,16 @@
                                     const pixelIndex = (y + kernelY - 1) * width + (x + kernelX - 1);
                                     const kernelIndex = kernelX * 3 + kernelY;
                             
-                                    hSum += pixels * sobelHKernel;
-                                    vSum += pixels * sobelVKernel;
+                                    hSum += pixels[i] * sobelHKernel;
+                                    vSum += pixels[i] * sobelVKernel;
                                   }
                                 }
                             
                                 // Calculate edge magnitude using hypot function for accuracy
-                                edgeMap = Math.hypot(hSum, vSum);
+                                edgeMap[i] = Math.hypot(hSum, vSum);
                             
                                 // Normalize edge magnitude to  range
-                                edgeMap /= 255;
+                                edgeMap[i] /= 255;
                               }
                             
                               return edgeMap;
