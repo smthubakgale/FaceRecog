@@ -65,27 +65,27 @@
                                0.0,  0.0,  0.0,
                               +1.0, +2.0, +1.0
                             ];
-                                                        
+                            
+                            
                             let edges = new Uint8ClampedArray(pixels.length);
                             // now edge detect
-                            for (let y = 1; y < canvas.height - 1; y++) {
-                                  for (let x = 1; x < canvas.width - 1; x++) {
-                                    let i = (y * canvas.width) + x;
-                                    let hSum = 0;
-                                    let vSum = 0;
-                                
-                                    for (let kernelY = 0; kernelY < 3; kernelY++) {
-                                      for (let kernelX = 0; kernelX < 3; kernelX++) {
-                                        let pixelIndex = (y + kernelY - 1) * canvas.width + (x + kernelX - 1);
-                                        let kernelAccessor = kernelX * 3 + kernelY;
-                                        hSum += pixels[pixelIndex] * sobel_h[kernelAccessor];
-                                        vSum += pixels[pixelIndex] * sobel_v[kernelAccessor];
-                                      }
-                                    }
-                                
-                                    edges[i] = Math.sqrt(hSum * hSum + vSum * vSum);
-                                  }
-                                }
+                            for (let i = 0; i < pixels.length; i++) 
+                            {
+                            	// loop our 3x3 kernels, build our kernel values
+                            	let hSum = 0;
+                            	let vSum = 0;
+                            	for (let y = 0; y < 3; y++)
+                            	{
+                            	  for (let x = 0; x < 3; x++) 
+                            	  {
+                            		let pixel = pixels[i + (canvas.width * y) + x];
+                            		let kernelAccessor = (x) * 3 + (y);
+                            		hSum += pixel * sobel_h[kernelAccessor];
+                            		vSum += pixel * sobel_v[kernelAccessor];
+                            	  } 
+                            	}
+                            	edges[i] = Math.sqrt(hSum * hSum + vSum * vSum); 
+                            };
                           
                             console.log(edges);
                             // Update the canvas with the edges
@@ -95,23 +95,25 @@
                             // Detect facial features
                             console.log(edges);
                             alert("B");
-                        },200);
 
-                        return;
+                            setTimeout(()=>
+                            {
+                                const features = detectFacialFeatures(edges, canvas.width, canvas.height);
+            
+                                console.log(features);
+            
+                                // Draw features on canvas
+                                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                ctx.drawImage(img, 0, 0);
+                                ctx.fillStyle = 'red';
+                                features.forEach(feature => {
+                                    ctx.beginPath();
+                                    ctx.arc(feature.x, feature.y, 2, 0, 2 * Math.PI);
+                                    ctx.fill();
+                                });
+                            },200);
+                        },200); 
                         
-                        const features = detectFacialFeatures(edges, canvas.width, canvas.height);
-    
-                        console.log(features);
-    
-                        // Draw features on canvas
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        ctx.drawImage(img, 0, 0);
-                        ctx.fillStyle = 'red';
-                        features.forEach(feature => {
-                            ctx.beginPath();
-                            ctx.arc(feature.x, feature.y, 2, 0, 2 * Math.PI);
-                            ctx.fill();
-                        });
                     } , 200); 
                 });
                 img.src = imageData;
