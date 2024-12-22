@@ -91,7 +91,8 @@
                 return faceRegion;
             };
 
-            const faceRegion = await extractFaceRegion(imgElement);
+            const faceRegion = await extractFaceRegion(gray);
+            console.log(11);
             // Step 12: Resize face image
             const resizeFaceImage = async (faceRegion) => {
                 // Resize face image
@@ -100,9 +101,12 @@
                 return resizedFaceImage;
             };
 
+            const resizedFaceImage = await resizeFaceImage(faceRegion);
+            console.log(12);
             // Step 13: Load MobileFaceNet model
             const mobileFaceNetModel = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet/model.json');
 
+            console.log(13);
             // Step 14: Extract facial features
             const extractFacialFeatures = async (resizedFaceImage) => {
                 // Extract facial features
@@ -111,16 +115,16 @@
                 return features;
             };
 
+            const features = await extractFacialFeatures(resizedFaceImage);
+            console.log(14);
             // Step 15: Display features
             const displayFeatures = async (features) => {
                 // Display features
                 console.log(features);
             };
-
-            // Usage
-            const resizedFaceImage = await resizeFaceImage(faceRegion);
-            const features = await extractFacialFeatures(resizedFaceImage);
+ 
             await displayFeatures(features);
+            console.log(15);
             
             // Step 17: Release resources
             img.delete();
