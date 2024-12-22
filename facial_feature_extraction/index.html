@@ -35,7 +35,8 @@
                     setTimeout(() => 
                     { 
                         // Preprocess image
-                        let pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data; 
+                        let original = ctx.getImageData(0, 0, canvas.width, canvas.height).data; 
+                        let pixels = original;
  
                         // Convert image to grayscale
                         for (let i = 0; i < pixels.length; i += 4) {
@@ -103,8 +104,11 @@
                                 console.log(features);
             
                                 // Draw features on canvas
-                                ctx.clearRect(0, 0, canvas.width, canvas.height, 0, 0, 256, 256);
-                                ctx.drawImage(img, 0, 0,canvas.width, canvas.height, 0, 0, 256, 256);
+                                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                                imageData.data.set(original);
+                                ctx.putImageData(imageData, 0, 0);
+                                        
+                                //ctx.clearRect(0, 0, canvas.width, canvas.height, 0, 0, 256, 256); 
                                 ctx.fillStyle = 'red';
                                 features.forEach(feature => {
                                     ctx.beginPath();
