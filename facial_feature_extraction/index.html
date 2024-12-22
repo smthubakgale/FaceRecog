@@ -91,7 +91,7 @@
                             // Detect facial features
                             console.log(edges);
                             alert("B");
-                             return;
+                             
                             setTimeout(()=>
                             {
                                 const features = detectFacialFeatures(edges, canvas.width, canvas.height);
@@ -141,6 +141,7 @@
 
             features.push({ x: centerX, y: centerY, type: 'face_center' });
 
+            return features;
             // Detect eye centers
             const eyeRadius = 10;
             const eyeThreshold = 100;
