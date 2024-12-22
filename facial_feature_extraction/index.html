@@ -33,7 +33,7 @@
                     ctx.drawImage(img, 0, 0);
 
                     // Preprocess image
-                    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                    let pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
                     // Convert image to grayscale
                     for (let i = 0; i < pixels.length; i += 4) {
@@ -54,7 +54,7 @@
                         1, 2, 1
                     ];
 
-                    const edges = new Uint8ClampedArray(pixels.length);
+                    let edges = new Uint8ClampedArray(pixels.length);
                     for (let y = 1; y < canvas.height - 1; y++) {
                         for (let x = 1; x < canvas.width - 1; x++) {
                             let edge = 0;
@@ -69,16 +69,16 @@
                         }
                     }
 
-                    // Detect facial landmarks using machine learning algorithm
-                    const landmarks = detectFacialLandmarks(edges, canvas.width, canvas.height);
+                    // Detect facial features
+                    const features = detectFacialFeatures(edges, canvas.width, canvas.height);
 
-                    // Draw landmarks on canvas
+                    // Draw features on canvas
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.drawImage(img, 0, 0);
                     ctx.fillStyle = 'red';
-                    landmarks.forEach(landmark => {
+                    features.forEach(feature => {
                         ctx.beginPath();
-                        ctx.arc(landmark.x, landmark.y, 2, 0, 2 * Math.PI);
+                        ctx.arc(feature.x, feature.y, 2, 0, 2 * Math.PI);
                         ctx.fill();
                     });
                 });
@@ -87,9 +87,9 @@
             reader.readAsDataURL(file);
         });
 
-        // Machine learning algorithm for facial landmark detection
-        function detectFacialLandmarks(edges, width, height) {
-            const landmarks = ;
+        // Machine learning algorithm for facial feature detection
+        function detectFacialFeatures(edges, width, height) {
+            const features = [];
 
             // Detect face center
             let maxEdge = 0;
@@ -105,7 +105,7 @@
                 }
             }
 
-            landmarks.push({ x: centerX, y: centerY, type: 'face_center' });
+            features.push({ x: centerX, y: centerY, type: 'face_center' });
 
             // Detect eye centers
             const eyeRadius = 10;
@@ -114,7 +114,7 @@
                 for (let x = centerX - eyeRadius; x <= centerX + eyeRadius; x++) {
                     const edgeIndex = y * width * 4 + x * 4;
                     if (edges > eyeThreshold) {
-                        landmarks.push({ x, y, type: 'eye_center' });
+                        features.push({ x, y, type: 'eye_center' });
                     }
                 }
             }
@@ -126,7 +126,7 @@
                 for (let x = centerX - noseRadius; x <= centerX + noseRadius; x++) {
                     const edgeIndex = y * width * 4 + x * 4;
                     if (edges > noseThreshold) {
-                        landmarks.push({ x, y, type: 'nose_tip' });
+                        features.push({ x, y, type: 'nose_tip' });
                     }
                 }
             }
@@ -138,12 +138,60 @@
                 for (let x = centerX - mouthRadius; x <= centerX + mouthRadius; x++) {
                     const edgeIndex = y * width * 4 + x * 4;
                     if (edges > mouthThreshold) {
-                        landmarks.push({ x, y, type: 'mouth_corner' });
+                        features.push({ x, y, type: 'mouth_corner' });
                     }
                 }
             }
 
-            return landmarks;
+            // Detect eyebrow centers
+            const eyebrowRadius = 10;
+            const eyebrowThreshold = 120;
+            for (let y = centerY - eyebrowRadius; y <= centerY + eyebrowRadius; y++) {
+                for (let x = centerX - eyebrowRadius; x <= centerX + eyebrowRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > eyebrowThreshold) {
+                        features.push({ x, y, type: 'eyebrow_center' });
+                    }
+                }
+            }
+
+            // Detect lip contours
+            const lipRadius = 10;
+            const lipThreshold = 80;
+            for (let y = centerY + lipRadius; y <= centerY + lipRadius * 2; y++) {
+                for (let x = centerX - lipRadius; x <= centerX + lipRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > lipThreshold) {
+                        features.push({ x, y, type: 'lip_contour' });
+                    }
+                }
+            }
+
+            // Detect facial contours
+            const facialContourRadius = 20;
+            const facialContourThreshold = 150;
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > facialContourThreshold) {
+                        features.push({ x, y, type: 'facial_contour' });
+                    }
+                }
+            }
+
+            // Detect eye contours
+            const eyeContourRadius = 5;
+            const eyeContourThreshold = 100;
+            for (let y = centerY - eyeContourRadius; y <= centerY + eyeContourRadius; y++) {
+                for (let x = centerX - eyeContourRadius; x <= centerX + eyeContourRadius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges > eyeContourThreshold) {
+                        features.push({ x, y, type: 'eye_contour' });
+                    }
+                }
+            }
+
+            return features;
         }
     </script>
 </body>
