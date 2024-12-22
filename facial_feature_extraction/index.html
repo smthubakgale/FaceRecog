@@ -30,10 +30,8 @@
                 img.addEventListener('load', () => {
                     canvas.width = img.width;
                     canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-
-                    alert(img.width , img.height);
-                    // Preprocess image
+                    ctx.drawImage(img, 0, 0 () => {
+                          // Preprocess image
                     let pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
                     // Convert image to grayscale
@@ -41,11 +39,9 @@
                       const lightness = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
                       pixels[i] = pixels[i + 1] = pixels[i + 2] = lightness;
                     }
-                    alert("A") ;
-
+                        
                     console.log(pixels);
-
-                    return;
+                    alert("A") ; 
                     // Apply Sobel filter for edge detection
                     const sobelKernelX = [
                         -1, 0, 1,
@@ -76,6 +72,7 @@
 
                     // Detect facial features
                     console.log(edges);
+                    alert("B");
                     const features = detectFacialFeatures(edges, canvas.width, canvas.height);
 
                     console.log(features);
@@ -89,6 +86,7 @@
                         ctx.arc(feature.x, feature.y, 2, 0, 2 * Math.PI);
                         ctx.fill();
                     });
+                    }); 
                 });
                 img.src = imageData;
             });
