@@ -81,7 +81,7 @@
                     }
 
                     // Face detection and landmark extraction
-                    const faceRegions = ;
+                    const faceRegions = [];
                     for (let y = 0; y < grayCanvas.height; y++) {
                         for (let x = 0; x < grayCanvas.width; x++) {
                             const edgeIndex = y * grayCanvas.width * 4 + x * 4;
@@ -91,7 +91,7 @@
                         }
                     }
 
-                    const landmarks = ;
+                    const landmarks = [];
                     faceRegions.forEach(region => {
                         landmarks.push({ x: region.x, y: region.y, type: 'face_center' });
                     });
