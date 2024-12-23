@@ -40,16 +40,23 @@
                         // Step 2 : Convert to Grayscale 
                         let pixels = convertToGrayScale(original);
                             
-                        imshow(pixels, canvas , () =>{
-                            
+                        imshow(pixels, canvas , () =>
+                        { 
                             console.log(pixels);
                             alert("A") ; 
-
                             // Step 3 : Apply Gaussian Blurr 
-                            
-                        });
-                         
-                        //:
+                            let blurr = applyGaussianBlur(pixels, canvas.width, canvas.height);
+                            imshow(blurr, canvas , () =>
+                            { 
+                                console.log(blurr);
+                                alert("B") ; 
+                                // Step 4 : Apply Sobel Edge Segmentation 
+
+                                // 
+                            });
+                            //
+                        }); 
+                        //
                         return;
                         setTimeout(()=>
                         {
