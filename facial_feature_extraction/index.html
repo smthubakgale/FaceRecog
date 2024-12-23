@@ -180,7 +180,9 @@
                             }
                         }
                     }
-                    blurredPixels[(y * width) + x] = sum;
+                    // Normalize the sum by dividing it by the sum of the kernel weights
+                    const kernelSum = kernel.reduce((a, b) => a + b, 0);
+                    blurredPixels[(y * width) + x] = sum / kernelSum;
                 }
             }
         
