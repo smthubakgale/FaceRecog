@@ -45,7 +45,7 @@
                             console.log(pixels);
                             alert("A") ; 
                             // Step 3 : Apply Gaussian Blurr 
-                            let blurr = applyGaussianBlur(pixels, canvas.width, canvas.height, 1.0, 128);;
+                            let blurr = sharpenImage(pixels, canvas.width, canvas.height, 1.0);;
                             imshow(blurr, canvas , () =>
                             { 
                                 console.log(blurr);
@@ -160,8 +160,8 @@
             }
             return pixels;
         }
-        function applyGaussianBlur(pixels, width, height, sigma = 1.0, threshold = 128) {
-            const blurredPixels = new Uint8Array(pixels.length);
+
+        function gaussianBlur(pixels, width, height, sigma = 1.0) {
             const kernelSize = Math.ceil(3 * sigma) * 2 + 1;
             const kernel = new Array(kernelSize * kernelSize).fill(0);
         
@@ -182,6 +182,7 @@
             }
         
             // Apply Gaussian blur
+            const blurredPixels = new Uint8Array(pixels.length);
             for (let y = 0; y < height; y++) {
                 for (let x = 0; x < width; x++) {
                     let sum = 0;
@@ -194,12 +195,29 @@
                             }
                         }
                     }
-                    blurredPixels[(y * width) + x] = sum > threshold ? 255 : 0;
+                    blurredPixels[(y * width) + x] = sum;
                 }
             }
         
             return blurredPixels;
-        }    
+        }
+        
+        function sharpenImage(pixels, width, height, sigma = 1.0) {
+            const blurredPixels = gaussianBlur(pixels, width, height, sigma);
+            const sharpenedPixels = new Uint8Array(pixels.length);
+        
+            // Subtract blurred image from original image
+            for (let i = 0; i < pixels.length; i++) {
+                sharpenedPixels[i] = pixels[i] - blurredPixels[i];
+            }
+        
+            // Add high-frequency details to original image
+            for (let i = 0; i < pixels.length; i++) {
+                sharpenedPixels[i] += pixels[i];
+            }
+        
+            return sharpenedPixels;
+        }        
         
         function sobelEdgeDetection(blurredPixels, width, height) {
             const edges = new Uint8Array(blurredPixels.length);
