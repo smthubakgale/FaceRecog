@@ -40,11 +40,17 @@
                         // Step 2 : Convert to Grayscale 
                         let pixels = convertToGrayScale(original);
                             
-                        imshow(pixels, canvas);
-                        
-                        console.log(pixels);
-                        alert("A") ;   
+                        imshow(pixels, canvas , () =>{
+                            
+                            console.log(pixels);
+                            alert("A") ; 
+
+                            // Step 3 : Apply Gaussian Blurr 
+                            
+                        });
+                         
                         //:
+                        return;
                         setTimeout(()=>
                         {
                             const sobel_v = [
@@ -127,11 +133,16 @@
         });
 
         //
-        function imshow(pixels, canvas) {
+        function imshow(pixels, canvas, callback ) {
             const ctx = canvas.getContext('2d');
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             imageData.data.set(pixels);
             ctx.putImageData(imageData, 0, 0);
+            setTimeout(() => {
+                if (callback) {
+                    callback();
+                }
+            }, 200);
         }
         function convertToGrayScale(original) {
             let pixels = original;
