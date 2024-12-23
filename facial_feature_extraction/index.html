@@ -45,7 +45,7 @@
                             console.log(pixels);
                             alert("A") ; 
                             // Step 3 : Apply Gaussian Blurr 
-                            let blurr = sharpenImage(pixels, canvas.width, canvas.height, 1.0);;
+                            let blurr = sharpenImage(pixels, canvas.width, canvas.height, 0.7);
                             imshow(blurr, canvas , () =>
                             { 
                                 console.log(blurr);
