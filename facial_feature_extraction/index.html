@@ -45,7 +45,7 @@
                             console.log(pixels);
                             alert("A") ; 
                             // Step 3 : Apply Gaussian Blurr 
-                            let blurr = applyGaussianBlur(pixels, canvas.width, canvas.height, 0.7 , 64);
+                            let blurr = applyGaussianBlur(pixels, canvas.width, canvas.height, 2.0 , 128);
                             imshow(blurr, canvas , () =>
                             { 
                                 console.log(blurr);
