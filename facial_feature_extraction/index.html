@@ -161,7 +161,7 @@
             return pixels;
         } 
 
-        function GaussianBlur(pixels, width, height, sigma = 1.0, threshold = 128) {
+        function gaussianBlur(pixels, width, height, sigma = 1.0, threshold = 128) {
             const blurredPixels = new Uint8Array(pixels.length);
             const kernelSize = Math.ceil(3 * sigma) * 2 + 1;
             const kernel = new Array(kernelSize * kernelSize).fill(0);
