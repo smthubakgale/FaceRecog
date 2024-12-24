@@ -227,37 +227,39 @@
             return sharpenedPixels;
         }        
         
-        function sobelEdgeDetection(blurredPixels, width, height) {
-            const edges = new Uint8Array(blurredPixels.length);
-            const sobelX = [
-                -1, 0, 1,
-                -2, 0, 2,
-                -1, 0, 1
+        function sobelEdgeDetection(pixels, width, height) 
+        {
+            const sobel_v = [
+              -1.0, 0.0, +1.0,
+              -2.0, 0.0, +2.0,
+              -1.0, 0.0, +1.0
             ];
-            const sobelY = [
-                -1, -2, -1,
-                0, 0, 0,
-                1, 2, 1
+            
+            const sobel_h = [
+              -1.0, -2.0, -1.0,
+               0.0,  0.0,  0.0,
+              +1.0, +2.0, +1.0
             ];
-        
-            for (let y = 0; y < height; y++) {
-                for (let x = 0; x < width; x++) {
-                    let sumX = 0;
-                    let sumY = 0;
-                    for (let ky = -1; ky <= 1; ky++) {
-                        for (let kx = -1; kx <= 1; kx++) {
-                            const yy = y + ky;
-                            const xx = x + kx;
-                            if (yy >= 0 && yy < height && xx >= 0 && xx < width) {
-                                sumX += blurredPixels[(yy * width) + xx] * sobelX[ky * 3 + kx];
-                                sumY += blurredPixels[(yy * width) + xx] * sobelY[ky * 3 + kx];
-                            }
-                        }
-                    }
-                    edges[(y * width) + x] = Math.sqrt(sumX * sumX + sumY * sumY);
+            
+            let edges = new Uint8ClampedArray(pixels.length);
+            for (let i = 0; i < pixels.length; i += 4) {
+              let hSum = 0;
+              let vSum = 0;
+              for (let y = 0; y < 3; y++) {
+                for (let x = 0; x < 3; x++) {
+                  let pixelIndex = i + (y * 4 * canvas.width) + (x * 4);
+                  if (pixelIndex < pixels.length) {
+                    hSum += pixels[pixelIndex] * sobel_h[x * 3 + y];
+                    vSum += pixels[pixelIndex] * sobel_v[x * 3 + y];
+                  }
                 }
+              }
+              edges[i] = Math.sqrt(hSum * hSum + vSum * vSum);
+              edges[i + 1] = edges[i];
+              edges[i + 2] = edges[i];
+              edges[i + 3] = 255; // Alpha channel
             }
-        
+
             return edges;
         }
         // Machine learning algorithm for facial feature detection
