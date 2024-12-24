@@ -51,7 +51,15 @@
                                 console.log(blurr);
                                 alert("B") ; 
                                 // Step 4 : Apply Sobel Edge Segmentation 
-
+                                let edges = sobelEdgeDetection(blurr , canvas.width, canvas.height);
+                                imshow(edges, canvas , () =>
+                                { 
+                                    console.log(edges);
+                                    alert("C") ; 
+                                    // Step 5 : 
+                                    
+                                    //
+                                });
                                 // 
                             });
                             //
