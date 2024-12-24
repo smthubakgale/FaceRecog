@@ -8,16 +8,34 @@
         #canvas {
             border: 1px solid black;
         }
+        #container{
+            position:relative;
+        }
+          #selection-overlay {
+            position: absolute;
+            border: 1px solid red;
+            background-color: rgba(255, 0, 0, 0.2);
+            display: none;
+        }
     </style>
 </head>
 <body>
     <input type="file" id="imageInput" accept="image/*">
-    <canvas id="canvas"></canvas>
+    <div id="container">
+        <canvas id="canvas"></canvas>
+        <div id="selection-overlay"></div>
+    </div>
+    <button id="select-button" disabled>Select Pixels</button>
+    <button id="done-button" disabled style="display: none;">Done</button>
+    
     
     <script>
         const imageInput = document.getElementById('imageInput');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        const selectButton = document.getElementById('select-button');
+        const doneButton = document.getElementById('done-button');
+        const selectionOverlay = document.getElementById('selection-overlay');
 
         // Load image and preprocess
         imageInput.addEventListener('change', (e) => {
