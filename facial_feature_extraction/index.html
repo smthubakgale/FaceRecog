@@ -64,89 +64,14 @@
                             });
                             //
                         }); 
-                        //
-                        return;
-                        setTimeout(()=>
-                        {
-                            const sobel_v = [
-                              -1.0, 0.0, +1.0,
-                              -2.0, 0.0, +2.0,
-                              -1.0, 0.0, +1.0
-                            ];
-                            
-                            const sobel_h = [
-                              -1.0, -2.0, -1.0,
-                               0.0,  0.0,  0.0,
-                              +1.0, +2.0, +1.0
-                            ];
-                            
-                            let edges = new Uint8ClampedArray(pixels.length);
-                            for (let i = 0; i < pixels.length; i += 4) {
-                              let hSum = 0;
-                              let vSum = 0;
-                              for (let y = 0; y < 3; y++) {
-                                for (let x = 0; x < 3; x++) {
-                                  let pixelIndex = i + (y * 4 * canvas.width) + (x * 4);
-                                  if (pixelIndex < pixels.length) {
-                                    hSum += pixels[pixelIndex] * sobel_h[x * 3 + y];
-                                    vSum += pixels[pixelIndex] * sobel_v[x * 3 + y];
-                                  }
-                                }
-                              }
-                              edges[i] = Math.sqrt(hSum * hSum + vSum * vSum);
-                              edges[i + 1] = edges[i];
-                              edges[i + 2] = edges[i];
-                              edges[i + 3] = 255; // Alpha channel
-                            }
-                            console.log(edges);
-                            // Update the canvas with the edges
-                            const imageData = ctx.createImageData(canvas.width, canvas.height);
-                            imageData.data.set(edges);
-                            ctx.putImageData(imageData, 0, 0);
-                            // Detect facial features
-                            console.log(edges);
-                            //alert("B");
-                            
-                            setTimeout(()=>
-                            {
-                                const features = detectFacialFeatures(edges, canvas.width, canvas.height);
-            
-                                console.log(features);
-            
-                                // Draw features on canvas
-                                //const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                                //imageData.data.set(original);
-                                //ctx.putImageData(imageData, 0, 0);
-                                        
-                                //ctx.clearRect(0, 0, canvas.width, canvas.height, 0, 0, 256, 256); 
-                                const colorMap = {
-                                  eye_center: 'red',
-                                  eyebrow_center : 'green',
-                                  nose_tip : 'blue',
-                                  mouth_corner: 'yellow',
-                                  lip_contour : 'blue' ,
-                                  facial_contour : 'orange' ,
-                                  eye_contour : 'pink' 
-                                };
-                                
-                                features.forEach(feature => {
-                                    ctx.fillStyle = colorMap[feature.type] ? colorMap[feature.type] : 'purple';
-                                    
-                                    ctx.beginPath();
-                                    ctx.arc(feature.x, feature.y, 2, 0, 2 * Math.PI);
-                                    ctx.fill();
-                                });
-                            },200);
-                        },200); 
-                        
+                        // 
                     } , 200); 
                 });
                 img.src = imageData;
             });
 
             reader.readAsDataURL(file);
-        });
-
+        }); 
         //
         function imshow(pixels, canvas, callback ) {
             const ctx = canvas.getContext('2d');
