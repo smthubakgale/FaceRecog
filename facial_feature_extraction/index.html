@@ -56,8 +56,8 @@
                                 { 
                                     console.log(edges);
                                     alert("C") ; 
-                                    // Step 5 : 
-                                    
+                                    // Step 5 : Test Known Facial Features
+                                    testFacialFeatures(edges ,canvas);
                                     //
                                 });
                                 // 
@@ -367,6 +367,32 @@
             }
 
             return features;
+        }
+
+        function testFacialFeatures(edges ,canvas){
+            const ctx = canvas.getContext('2d');
+            const features = detectFacialFeatures(edges, canvas.width, canvas.height);
+            
+            console.log(features);
+    
+            //ctx.clearRect(0, 0, canvas.width, canvas.height, 0, 0, 256, 256); 
+            const colorMap = {
+              eye_center: 'red',
+              eyebrow_center : 'green',
+              nose_tip : 'blue',
+              mouth_corner: 'yellow',
+              lip_contour : 'blue' ,
+              facial_contour : 'orange' ,
+              eye_contour : 'pink' 
+            };
+            
+            features.forEach(feature => {
+                ctx.fillStyle = colorMap[feature.type] ? colorMap[feature.type] : 'purple';
+                
+                ctx.beginPath();
+                ctx.arc(feature.x, feature.y, 2, 0, 2 * Math.PI);
+                ctx.fill();
+            });
         }
     </script>
 </body>
