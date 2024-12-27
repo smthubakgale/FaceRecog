@@ -175,7 +175,7 @@
                 oCtx.beginPath();
                 oCtx.moveTo(lastX, lastY);
                 oCtx.lineTo(e.offsetX, e.offsetY);
-                oCtx.strokeStyle = tool == "pen" ? 'red' : `rgba(255, 255, 255, 1)`;
+                oCtx.strokeStyle = tool == "pen" ? 'red' : `rgba(0, 0, 0, 1)`;
                 oCtx.lineWidth = size;
                 oCtx.stroke();
                 lastX = e.offsetX;
