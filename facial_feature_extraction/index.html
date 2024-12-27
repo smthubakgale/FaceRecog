@@ -17,6 +17,7 @@
             left: 0; 
             border: none;
             pointer-events: none;
+            display:none;
         }
     </style>
 </head>
@@ -126,17 +127,22 @@
         });
 
         // Draw on overlay
-        overlay.addEventListener('mousedown', (e) => {
-            drawing = true;
-            lastX = e.offsetX;
-            lastY = e.offsetY;
-            oCtx.clearRect(0, 0, overlay.width, overlay.height);
-
-            console.log("Mousedown");
+        overlay.addEventListener('mousedown', (e) => 
+        {
+            console.log("Sam");
+            if(selecting)
+            {
+                drawing = true;
+                lastX = e.offsetX;
+                lastY = e.offsetY;
+                oCtx.clearRect(0, 0, overlay.width, overlay.height);
+    
+                console.log("Mousedown"); 
+            }
         });
 
         overlay.addEventListener('mousemove', (e) => {
-            if (drawing) {
+            if (selecting && drawing) {
                 oCtx.beginPath();
                 oCtx.moveTo(lastX, lastY);
                 oCtx.lineTo(e.offsetX, e.offsetY);
@@ -150,9 +156,12 @@
             }
         });
         overlay.addEventListener('mouseup', () => {
-            drawing = false;
-            console.log("done");
-            //getSelection();
+
+            if(selecting){
+                drawing = false;
+                console.log("done");
+                //getSelection();
+            }
         });
        
         // Allow drawing only after image is loaded
