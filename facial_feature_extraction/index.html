@@ -11,11 +11,14 @@
         #container{
             position:relative;
         }
-          #selection-overlay {
-            position: absolute;
-            border: 1px solid red;
-            background-color: rgba(255, 0, 0, 0.2);
-            display: none;
+          #overlay {
+           position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -23,7 +26,7 @@
     <input type="file" id="imageInput" accept="image/*" disabled>
     <div id="container">
         <canvas id="canvas"></canvas>
-        <div id="selection-overlay"></div>
+        <canvas id="overlay"></canvas>
     </div>
     <button id="select-button" disabled>Select Pixels</button>
     <button id="done-button" disabled style="display: none;">Done</button>
@@ -35,7 +38,10 @@
         const ctx = canvas.getContext('2d');
         const selectButton = document.getElementById('select-button');
         const doneButton = document.getElementById('done-button');
-        const selectionOverlay = document.getElementById('selection-overlay');
+        const overlay = document.getElementById('overlay');
+        let oCtx = overlay.getContext('2d');
+        let drawing = false;
+        let lastX, lastY;
 
         // Load image and preprocess
         imageInput.addEventListener('change', (e) => {
@@ -102,14 +108,15 @@
         // Event listeners
         selectButton.addEventListener('click', () => {
             selecting = true;
-            selectionOverlay.style.display = 'block';
+            oCtx.clearRect(0, 0, overlay.width, overlay.height);
+            overlay.style.display = 'block';
             doneButton.style.display = 'block';
             selectButton.style.display = 'none';
         });
 
         doneButton.addEventListener('click', () => {
             selecting = false;
-            selectionOverlay.style.display = 'none';
+            overlay.style.display = 'none';
             doneButton.style.display = 'none';
             selectButton.style.display = 'block';
             processSelectedPixels(selectedPixels);
@@ -117,31 +124,62 @@
             doneButton.disabled = true;
         });
 
-        canvas.addEventListener('mousedown', (e) => {
-            if (selecting) {
-                startX = e.clientX;
-                startY = e.clientY;
+        // Draw on overlay
+        overlay.addEventListener('mousedown', (e) => {
+            drawing = true;
+            lastX = e.offsetX;
+            lastY = e.offsetY;
+            oCtx.clearRect(0, 0, overlay.width, overlay.height);
+        });
+
+        overlay.addEventListener('mousemove', (e) => {
+            if (drawing) {
+                oCtx.beginPath();
+                oCtx.moveTo(lastX, lastY);
+                oCtx.lineTo(e.offsetX, e.offsetY);
+                oCtx.strokeStyle = 'red';
+                oCtx.lineWidth = 5;
+                oCtx.stroke();
+                lastX = e.offsetX;
+                lastY = e.offsetY;
+            }
+        });
+        overlay.addEventListener('mouseup', () => {
+            drawing = false;
+            getSelection();
+        });
+       
+        // Allow drawing only after image is loaded
+        overlay.addEventListener('mousedown', (e) => {
+            if (canvas.width === 0 || canvas.height === 0) {
+                alert('Please load an image first');
+                e.preventDefault();
             }
         });
 
-        canvas.addEventListener('mousemove', (e) => {
-            if (selecting) {
-                selectionRect = {
-                    x: Math.min(startX, e.clientX),
-                    y: Math.min(startY, e.clientY),
-                    width: Math.abs(e.clientX - startX),
-                    height: Math.abs(e.clientY - startY)
-                };
-                drawOverlay();
-            }
-        });
-
-        canvas.addEventListener('mouseup', () => {
-            if (selecting) {
-                getSelectedPixels();
-            }
-        });
+        function getSelection() {
+            const selectedPixels = ;
+            const imageData = oCtx.getImageData(0, 0, overlay.width, overlay.height);
+            const pixels = imageData.data;
         
+            // Loop through pixels to find selected ones
+            for (let i = 0; i < pixels.length; i += 4) {
+                if (pixels > 0) { // Check alpha channel (transparency)
+                    const x = (i / 4) % overlay.width;
+                    const y = Math.floor((i / 4) / overlay.width);
+                    selectedPixels.push({ x:x , y:y });
+                }
+            }
+        
+            // Get original pixel values using overlay x and y
+            selectedPixels.forEach((pixel) => {
+                const originalImageData = ctx.getImageData(pixel.x, pixel.y, 1, 1);
+                const pixelValue = originalImageData.data;
+        
+                console.log(`Pixel at (${pixel.x}, ${pixel.y}): Value: ${pixelValue}`);
+            });
+        }    
+        // 
         // Function to draw histogram
         function drawHistogram(selectedPixels, canvasId) {
           const canvas = document.getElementById(canvasId);
