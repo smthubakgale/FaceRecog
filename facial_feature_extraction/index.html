@@ -28,7 +28,7 @@
     <input type="file" id="imageInput" accept="image/*" disabled>
     <div id="tools">
         <div>
-            <input id="size" type="number" min="1" value="1" />
+            <input id="size" type="number" min="0" value="3" style="width:40px" />
         </div>
         <div> 
             <input type="radio" id="pen" name="tool" value="pen" checked>
@@ -161,11 +161,13 @@
 
         overlay.addEventListener('mousemove', (e) => {
             if (selecting && drawing) {
+                var size = document.getElementById("size").value;
+                size = size > 0 ? size : 3;
                 oCtx.beginPath();
                 oCtx.moveTo(lastX, lastY);
                 oCtx.lineTo(e.offsetX, e.offsetY);
                 oCtx.strokeStyle = 'red';
-                oCtx.lineWidth = 5;
+                oCtx.lineWidth = size;
                 oCtx.stroke();
                 lastX = e.offsetX;
                 lastY = e.offsetY;
