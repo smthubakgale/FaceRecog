@@ -18,10 +18,27 @@
             border: none; 
             display:none;
         }
+
+        #tools{
+            display:flex;
+        }
     </style>
 </head>
 <body>
     <input type="file" id="imageInput" accept="image/*" disabled>
+    <div id="tools">
+        <div>
+            <input id="size" type="number" min="1" value="1" />
+        </div>
+        <div> 
+            <input type="radio" id="pen" name="tool" value="pen" checked>
+            <label for="pen">Pen</label>
+        </div>
+        <div>
+            <input type="radio" id="eraser" name="tool" value="eraser">
+            <label for="eraser">Eraser</label>
+        </div>
+    </div>
     <div id="container">
         <canvas id="canvas"></canvas>
         <canvas id="overlay"></canvas>
