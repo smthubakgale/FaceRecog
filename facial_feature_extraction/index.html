@@ -113,6 +113,7 @@
             overlay.style.display = 'block';
             doneButton.style.display = 'block';
             selectButton.style.display = 'none';
+            oCtx.clearRect(0, 0, overlay.width, overlay.height);
         });
 
         doneButton.addEventListener('click', () => {
@@ -134,7 +135,6 @@
                 drawing = true;
                 lastX = e.offsetX;
                 lastY = e.offsetY;
-                oCtx.clearRect(0, 0, overlay.width, overlay.height);
     
                 console.log("Mousedown"); 
             }
