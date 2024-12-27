@@ -141,7 +141,66 @@
                 getSelectedPixels();
             }
         });
-
+        
+        // Function to draw histogram
+        function drawHistogram(selectedPixels, canvasId) {
+          const canvas = document.getElementById(canvasId);
+          const ctx = canvas.getContext('2d');
+          const histogram = {};
+          const canvasWidth = canvas.width;
+          const canvasHeight = canvas.height;
+        
+          // Calculate histogram
+          selectedPixels.forEach(pixel => {
+            const value = pixel.pixelValue;
+            histogram = (histogram || 0) + 1;
+          });
+        
+          // Find max frequency
+          let maxFrequency = 0;
+          Object.values(histogram).forEach(value => {
+            maxFrequency = Math.max(maxFrequency, value);
+          });
+        
+          // Draw background
+          ctx.fillStyle = 'rgb(240, 240, 240)';
+          ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        
+          // Draw histogram
+          ctx.fillStyle = 'rgb(50, 50, 50)';
+          Object.keys(histogram).forEach(value => {
+            const frequency = histogram;
+            const x = value / 255 * canvasWidth;
+            const y = canvasHeight - (frequency / maxFrequency) * canvasHeight;
+            const width = 2;
+            const height = (frequency / maxFrequency) * canvasHeight;
+            ctx.fillRect(x, y, width, height);
+          });
+        
+          // Draw axis
+          ctx.strokeStyle = 'rgb(200, 200, 200)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(0, canvasHeight);
+          ctx.lineTo(canvasWidth, canvasHeight);
+          ctx.stroke();
+        
+          ctx.beginPath();
+          ctx.moveTo(0, canvasHeight);
+          ctx.lineTo(0, 0);
+          ctx.stroke();
+        
+          // Draw labels
+          ctx.font = '12px Arial';
+          ctx.fillStyle = 'rgb(100, 100, 100)';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'top';
+          ctx.fillText('Pixel Value', canvasWidth / 2, canvasHeight + 10);
+        
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('Frequency', 10, canvasHeight / 2);
+        }
         // Draw selection overlay
         function drawOverlay() {
             selectionOverlay.style.left = `${selectionRect.x}px`;
