@@ -20,7 +20,7 @@
     </style>
 </head>
 <body>
-    <input type="file" id="imageInput" accept="image/*">
+    <input type="file" id="imageInput" accept="image/*" disabled>
     <div id="container">
         <canvas id="canvas"></canvas>
         <div id="selection-overlay"></div>
@@ -532,6 +532,10 @@
                 ctx.fill();
             });
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+          document.getElementById("fileInput").disabled = false;
+        });
     </script>
 </body>
 </html>
