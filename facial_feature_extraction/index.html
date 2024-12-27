@@ -171,16 +171,25 @@
                 size = size > 0 ? size : 3; 
 
                 console.log(tool);
+
+                if(tool== "pen"){
+                    oCtx.beginPath();
+                    oCtx.moveTo(lastX, lastY);
+                    oCtx.lineTo(e.offsetX, e.offsetY);
+                    oCtx.strokeStyle = tool == "pen" ? 'red' : `rgba(0, 0, 0, 1)`;
+                    oCtx.lineWidth = size;
+                    oCtx.stroke();
+                    lastX = e.offsetX;
+                    lastY = e.offsetY;   
+                }
+                else{
+                  const minX = Math.min(x, lastX) - size;
+                  const minY = Math.min(y, lastY) - size;
+                  const maxX = Math.max(x, lastX) + size;
+                  const maxY = Math.max(y, lastY) + size;
                 
-                oCtx.beginPath();
-                oCtx.moveTo(lastX, lastY);
-                oCtx.lineTo(e.offsetX, e.offsetY);
-                oCtx.strokeStyle = tool == "pen" ? 'red' : `rgba(0, 0, 0, 1)`;
-                oCtx.lineWidth = size;
-                oCtx.stroke();
-                lastX = e.offsetX;
-                lastY = e.offsetY;
- 
+                  oCtx.clearRect(minX, minY, maxX - minX, maxY - minY);
+                } 
             }
         });
         overlay.addEventListener('mouseup', () => {
