@@ -144,7 +144,16 @@
             selectedPixels = [];
             doneButton.disabled = true;
         });
+        //
+        let tool = document.querySelector(":checked").value;
 
+        document.getElementsByName("tool").forEach((radio) => {
+          radio.addEventListener('change', () => {
+            tool = document.querySelector(":checked").value;
+              console.log(tool);
+          });
+        });
+        console.log(tool);
         // Draw on overlay
         overlay.addEventListener('mousedown', (e) => 
         { 
@@ -159,8 +168,7 @@
         overlay.addEventListener('mousemove', (e) => {
             if (selecting && drawing) {
                 var size = document.getElementById("size").value;
-                size = size > 0 ? size : 3;
-                let tool = document.getElementsByName("tool").value;
+                size = size > 0 ? size : 3; 
 
                 console.log(tool);
                 
