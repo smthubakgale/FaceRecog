@@ -163,10 +163,12 @@
             if (selecting && drawing) {
                 var size = document.getElementById("size").value;
                 size = size > 0 ? size : 3;
+                let tool = document.getElementsByName("tool").value;
+                
                 oCtx.beginPath();
                 oCtx.moveTo(lastX, lastY);
                 oCtx.lineTo(e.offsetX, e.offsetY);
-                oCtx.strokeStyle = 'red';
+                oCtx.strokeStyle = tool == "pen" ? 'red' : `rgba(255, 255, 255, 1)`;
                 oCtx.lineWidth = size;
                 oCtx.stroke();
                 lastX = e.offsetX;
