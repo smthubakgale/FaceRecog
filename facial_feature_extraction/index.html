@@ -147,15 +147,12 @@
 
         // Draw on overlay
         overlay.addEventListener('mousedown', (e) => 
-        {
-            console.log("Sam");
+        { 
             if(selecting)
             {
                 drawing = true;
                 lastX = e.offsetX;
                 lastY = e.offsetY;
-    
-                console.log("Mousedown"); 
             }
         });
 
@@ -164,6 +161,8 @@
                 var size = document.getElementById("size").value;
                 size = size > 0 ? size : 3;
                 let tool = document.getElementsByName("tool").value;
+
+                console.log(tool);
                 
                 oCtx.beginPath();
                 oCtx.moveTo(lastX, lastY);
@@ -173,15 +172,13 @@
                 oCtx.stroke();
                 lastX = e.offsetX;
                 lastY = e.offsetY;
-
-                console.log("drawing");
+ 
             }
         });
         overlay.addEventListener('mouseup', () => {
 
             if(selecting){
-                drawing = false;
-                console.log("done");
+                drawing = false; 
                 //getSelection();
             }
         });
