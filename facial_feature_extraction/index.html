@@ -41,6 +41,8 @@
         let drawing = false;
         let lastX, lastY;
 
+        let size = 512; 
+
         // Load image and preprocess
         imageInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -51,12 +53,12 @@
                 const img = new Image();
 
                 img.addEventListener('load', () => {
-                    canvas.width = 256;
-                    canvas.height = 256;
-                    overlay.width = 256;
-                    overlay.height = 256;
+                    canvas.width = size;
+                    canvas.height = size;
+                    overlay.width = size;
+                    overlay.height = size;
                     
-                    ctx.drawImage(img, 0, 0,img.width, img.height, 0, 0, 256, 256);
+                    ctx.drawImage(img, 0, 0,img.width, img.height, 0, 0, size, size);
 
                     setTimeout(async () => 
                     { 
@@ -621,7 +623,7 @@
             
             console.log(features);
     
-            //ctx.clearRect(0, 0, canvas.width, canvas.height, 0, 0, 256, 256); 
+            //ctx.clearRect(0, 0, canvas.width, canvas.height, 0, 0, size, size); 
             const colorMap = {
               eye_center: 'red',
               eyebrow_center : 'green',
