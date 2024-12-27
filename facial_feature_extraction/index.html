@@ -55,6 +55,9 @@
                 img.addEventListener('load', () => {
                     canvas.width = 256;
                     canvas.height = 256;
+                    overlay.width = 256;
+                    overlay.height = 256;
+                    
                     ctx.drawImage(img, 0, 0,img.width, img.height, 0, 0, 256, 256);
 
                     setTimeout(async () => 
@@ -130,6 +133,8 @@
             lastX = e.offsetX;
             lastY = e.offsetY;
             oCtx.clearRect(0, 0, overlay.width, overlay.height);
+
+            console.log("Mousedown");
         });
 
         overlay.addEventListener('mousemove', (e) => {
@@ -142,11 +147,14 @@
                 oCtx.stroke();
                 lastX = e.offsetX;
                 lastY = e.offsetY;
+
+                console.log("drawing");
             }
         });
         overlay.addEventListener('mouseup', () => {
             drawing = false;
-            getSelection();
+            console.log("done");
+            //getSelection();
         });
        
         // Allow drawing only after image is loaded
