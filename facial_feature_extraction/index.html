@@ -158,8 +158,8 @@
                 if (pixels > 0) {
                     const x = (i / 4) % selectionRect.width + selectionRect.x;
                     const y = Math.floor((i / 4) / selectionRect.width) + selectionRect.y;
-                    const pixelValue = , pixels, pixels, pixels];
-                    selectedPixels.push({ x, y, pixelValue });
+                    const pixelValue = pixels[i];
+                    selectedPixels.push({ x:x , y:y , pixelValue:pixelValue });
                 }
             }
         }
@@ -171,10 +171,7 @@
             pixels.forEach(pixel => {
                 const index = (pixel.y * width * 4) + (pixel.x * 4);
                 if (index >= 0 && index < mask.length) {
-                    mask = pixel.pixelValue;
-                    mask = pixel.pixelValue;
-                    mask = pixel.pixelValue;
-                    mask = pixel.pixelValue;
+                    mask[index] = pixel.pixelValue; 
                 }
             });
 
