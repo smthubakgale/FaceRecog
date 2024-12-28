@@ -229,11 +229,11 @@
             console.log(pixels);
         
             // Loop through pixels to find selected ones
-            for (let y = 0; y < height; y++)
+            for (let y = 0; y < overlay.height; y++)
             {
-                for (let x = 0; x < width; x++) 
+                for (let x = 0; x < overlay.width; x++) 
                 {
-                    var index = (y * width) + x;
+                    var index = (y * overlay.width) + x;
 
                     if(pixels[index] > 0){
                         selectedPixels.push({ x:x , y:y });
