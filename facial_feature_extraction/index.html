@@ -271,7 +271,7 @@
               });
              //
             drawHistogram(histogram, "histo"); 
-            const threshold = calculateThreshold(histogram);
+            const threshold = otsuThreshold(histogram);
             const meanRadius = calculateMeanRadius(histogram);
             const medianRadius = calculateMedianRadius(histogram);
             
@@ -281,6 +281,24 @@
         }    
         // 
         // Calculate threshold using Otsu's method
+        function otsuThreshold(histogram) {
+            // Calculate the threshold
+            let maxVariance = 0;
+            let threshold = 0;
+            for (let t = 0; t < 256; t++) {
+                const left = histogram.slice(0, t);
+                const right = histogram.slice(t);
+                const leftMean = left.reduce((sum, value, index) => sum + index * value, 0) / left.reduce((sum, value) => sum + value, 0);
+                const rightMean = right.reduce((sum, value, index) => sum + index * value, 0) / right.reduce((sum, value) => sum + value, 0);
+                const variance = left.reduce((sum, value) => sum + value, 0) * right.reduce((sum, value) => sum + value, 0) * Math.pow(leftMean - rightMean, 2);
+                if (variance > maxVariance) {
+                    maxVariance = variance;
+                    threshold = t;
+                }
+            }
+        
+            return threshold;
+        }
         function calculateThreshold(histogram) {
           let maxVariance = 0;
           let threshold = 0;
