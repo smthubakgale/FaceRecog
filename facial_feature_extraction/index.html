@@ -265,6 +265,7 @@
               }
 
               alert("C");
+            console.log(selectedPixels);
             /*
             selectedPixels.forEach((pixel , index) => {
                 const originalImageData = ctx.getImageData(pixel.x, pixel.y, 1, 1);
@@ -290,8 +291,8 @@
           const canvas = document.getElementById(canvasId);
           const ctx = canvas.getContext('2d');
           const histogram = {};
-          const canvasWidth = canvas.width;
-          const canvasHeight = canvas.height;
+          const canvasWidth = size;
+          const canvasHeight = size;
         
           // Calculate histogram
           selectedPixels.forEach(pixel => {
@@ -306,7 +307,8 @@
           Object.values(histogram).forEach(value => {
             maxFrequency = Math.max(maxFrequency, value);
           });
-        
+
+            console.log(maxFrequency);
           // Draw background
           ctx.fillStyle = 'rgb(240, 240, 240)';
           ctx.fillRect(0, 0, canvasWidth, canvasHeight);
