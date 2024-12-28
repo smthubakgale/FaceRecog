@@ -219,14 +219,7 @@
         function getSelection() {
             const selectedPixels = [];
             const imageData = oCtx.getImageData(0, 0, overlay.width, overlay.height);
-            const pixels = imageData.data;
-            //let pixels = convertToGrayScale(original);
-
-            alert("B");
-            //alert(original.length);
-            alert(pixels.length);
-
-            console.log(pixels);
+            const pixels = imageData.data; 
         
             // Loop through pixels to find selected ones 
             for (let i = 0; i < pixels.length; i++) {
@@ -236,10 +229,6 @@
                     selectedPixels.push({ x:x , y:y }); 
                 }
             }
-            
-
-            alert(selectedPixels.length);
-        
             // Get original pixel values using overlay x and y
             selectedPixels.forEach((pixel) => {
                 const originalImageData = ctx.getImageData(pixel.x, pixel.y, 1, 1);
@@ -263,7 +252,7 @@
           // Calculate histogram
           selectedPixels.forEach(pixel => {
             const value = pixel.pixelValue;
-            histogram = (histogram || 0) + 1;
+            histogram[value] = (histogram[value] || 0) + 1;
           });
         
           // Find max frequency
