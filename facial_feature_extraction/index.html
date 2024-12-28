@@ -5,8 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facial Feature Extraction</title>
     <style>
-        #canvas {
+        #canvas,#histo {
             border: 1px solid black;
+        }
+        #wrap {
+          display: flex; /* Enable Flexbox */
+          flex-wrap: wrap; /* Wrap items to next line */
+          gap: 10px; /* Add gap between items */
+          justify-content: space-between; /* Distribute items horizontally */
+          align-items: center; /* Align items vertically */
         }
         #container{
             position:relative;
@@ -39,7 +46,7 @@
             <label for="eraser">Eraser</label>
         </div>
     </div>
-    <div style="display:flex; flex-gap:10px;"> 
+    <div id="wrap"> 
         <div id="container">
             <canvas id="canvas"></canvas>
             <canvas id="overlay"></canvas>
