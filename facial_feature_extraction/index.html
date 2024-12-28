@@ -153,8 +153,7 @@
             selecting = false;
             overlay.style.display = 'none';
             doneButton.style.display = 'none';
-            selectButton.style.display = 'block';
-            selectedPixels = []; 
+            selectButton.style.display = 'block'; 
             alert("A");
             getSelection();
         });
@@ -221,6 +220,8 @@
             const selectedPixels = [];
             const imageData = oCtx.getImageData(0, 0, overlay.width, overlay.height);
             const pixels = imageData.data;
+
+            alert("B");
         
             // Loop through pixels to find selected ones
             for (let i = 0; i < pixels.length; i += 4) {
