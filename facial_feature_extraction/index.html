@@ -157,11 +157,9 @@
 
         document.getElementsByName("tool").forEach((radio) => {
           radio.addEventListener('change', () => {
-            tool = document.querySelector(":checked").value;
-              console.log(tool);
+            tool = document.querySelector(":checked").value; 
           });
-        });
-        console.log(tool);
+        }); 
         // Draw on overlay
         overlay.addEventListener('mousedown', (e) => 
         { 
@@ -177,8 +175,6 @@
             if (selecting && drawing) {
                 var size = document.getElementById("size").value;
                 size = size > 0 ? size : 3; 
-
-                console.log(tool);
 
                 if(tool== "pen"){
                     oCtx.beginPath();
