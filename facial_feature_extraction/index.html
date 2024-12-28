@@ -233,6 +233,8 @@
                     selectedPixels.push({ x:x , y:y });
                 }
             }
+
+            alert(selectedPixels.length);
         
             // Get original pixel values using overlay x and y
             selectedPixels.forEach((pixel) => {
@@ -242,6 +244,7 @@
                 console.log(`Pixel at (${pixel.x}, ${pixel.y}): Value: ${pixelValue}`);
             });
             //
+            alert("draw");
             drawHistogram(selectedPixels, "histo"); 
         }    
         // 
