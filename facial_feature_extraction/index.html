@@ -237,7 +237,7 @@
                 const originalImageData = ctx.getImageData(pixel.x, pixel.y, 1, 1);
                 const pixelValue = originalImageData.data;
 
-                console.log(JSON.parse(pixelValue));
+                console.log(JSON.parse(`[` + pixelValue + `]`));
                 //console.log(`Pixel at (${pixel.x}, ${pixel.y}): Value: ${ pixelValue}`);
             });
             //
