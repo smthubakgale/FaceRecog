@@ -155,9 +155,12 @@
             overlay.style.display = 'none';
             doneButton.style.display = 'none';
             selectButton.style.display = 'block';
-            processSelectedPixels(selectedPixels);
             selectedPixels = [];
             doneButton.disabled = true;
+            
+            //processSelectedPixels(selectedPixels);
+            
+            getSelection();
         });
         //
         let tool = document.querySelector(":checked").value;
@@ -207,7 +210,6 @@
 
             if(selecting){
                 drawing = false; 
-                getSelection();
             }
         });
        
