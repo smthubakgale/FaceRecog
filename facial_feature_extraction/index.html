@@ -248,7 +248,7 @@
             */
             // Get original pixel values using overlay x and y
 
-             const originalImageData = ctx.getImageData(pixel.x, pixel.y, 1, 1);
+             const originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
              const originals = originalImageData.data;
             
               for (let y = 0; y < canvas.height; y++) {
