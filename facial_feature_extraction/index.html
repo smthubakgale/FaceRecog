@@ -219,21 +219,39 @@
         function getSelection() {
             const selectedPixels = [];
             const imageData = oCtx.getImageData(0, 0, overlay.width, overlay.height);
-            const pixels = imageData.data;
+            const original = imageData.data;
+            let pixels = convertToGrayScale(original);
 
             alert("B");
+            alert(original.length);
             alert(pixels.length);
 
             console.log(pixels);
         
             // Loop through pixels to find selected ones
-            for (let i = 0; i < pixels.length; i+4) {
+            for (let y = 0; y < height; y++)
+            {
+                for (let x = 0; x < width; x++) 
+                {
+                    var index = (y * width) + x;
+
+                    if(pixels[index] > 0){
+                        selectedPixels.push({ x:x , y:y });
+                    }
+                }
+            }
+
+            alert("C");
+
+            /*
+            for (let i = 0; i < pixels.length; i++) {
                 if (pixels[i] > 0) { // Check alpha channel (transparency)
                     const x = (i / 4) % overlay.width;
                     const y = Math.floor((i / 4) / overlay.width);
-                    selectedPixels.push({ x:x , y:y });
+                    //selectedPixels.push({ x:x , y:y });
                 }
             }
+            */
 
             alert(selectedPixels.length);
         
