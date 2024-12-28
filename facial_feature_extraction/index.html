@@ -222,6 +222,19 @@
             const pixels = imageData.data; 
         
             // Loop through pixels to find selected ones 
+              for (let y = 0; y < overlay.height; y++) {
+                for (let x = 0; x < overlay.width; x++) {
+                    const index = y * overlay.width * 4 + x * 4;
+                    const pixel = pixels[index];
+                    if (pixel > 0) {
+                        selectedPixels.push({ x:x , y:y }); 
+                    }
+                }
+            }
+
+            alert(selectedPixels.length);
+
+            /*
             for (let i = 0; i < pixels.length; i+=4) {
                 try{
                     if (pixels[i] > 0) { // Check alpha channel (transparency)
@@ -232,14 +245,41 @@
                 }
                 catch{}
             }
+            */
             // Get original pixel values using overlay x and y
-            selectedPixels.forEach((pixel) => {
-                const originalImageData = ctx.getImageData(pixel.x, pixel.y, 1, 1);
-                const pixelValue = originalImageData.data;
 
-                console.log(JSON.parse(`[` + pixelValue + `]`));
-                //console.log(`Pixel at (${pixel.x}, ${pixel.y}): Value: ${ pixelValue}`);
+             const originalImageData = ctx.getImageData(pixel.x, pixel.y, 1, 1);
+             const originals = originalImageData.data;
+            
+              for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const index = y * canvas.width * 4 + x * 4;
+                    const original = originals[index];
+
+                    selectedPixels.forEach(pixel => {
+                      if (pixel.x === x && pixel.y === y) {
+                        pixel.pixelValue = original;
+                      }
+                    });
+                }
+              }
+
+              alert("C");
+            /*
+            selectedPixels.forEach((pixel , index) => {
+                const originalImageData = ctx.getImageData(pixel.x, pixel.y, 1, 1);
+                const pixelValue = JSON.parse(`[` +originalImageData.data `]`);
+ 
+                const r = pixelValue[0];
+                const g = pixelValue[1];
+                const b = pixelValue[2];
+                const grayscaleValue = Math.floor((0.2126 * r) + (0.7152 * g) + (0.0722 * b));
+
+                selectedPixels.pixelValue = grayscaleValue;
+                console.log(`Pixel at (${pixel.x}, ${pixel.y}): Value: ${ grayscaleValue }`);
             });
+
+            */
             //
             alert("draw");
             drawHistogram(selectedPixels, "histo"); 
@@ -258,6 +298,8 @@
             const value = pixel.pixelValue;
             histogram[value] = (histogram[value] || 0) + 1;
           });
+
+          console.log(histogram);
         
           // Find max frequency
           let maxFrequency = 0;
