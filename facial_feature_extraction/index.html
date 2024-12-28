@@ -39,9 +39,14 @@
             <label for="eraser">Eraser</label>
         </div>
     </div>
-    <div id="container">
-        <canvas id="canvas"></canvas>
-        <canvas id="overlay"></canvas>
+    <div style="display:flex; flex-gap:10px;"> 
+        <div id="container">
+            <canvas id="canvas"></canvas>
+            <canvas id="overlay"></canvas>
+        </div>
+        <div>
+            <canvas id="histo"></canvas>
+        </div>
     </div>
     <button id="select-button" disabled>Select Pixels</button>
     <button id="done-button" disabled style="display: none;">Done</button>
@@ -57,8 +62,9 @@
         let oCtx = overlay.getContext('2d');
         let drawing = false;
         let lastX, lastY;
+        const histo = document.getElementById('histo');
 
-        let size = 512; 
+        let size = 480; 
 
         // Load image and preprocess
         imageInput.addEventListener('change', (e) => {
@@ -74,6 +80,8 @@
                     canvas.height = size;
                     overlay.width = size;
                     overlay.height = size;
+                    histo.width = size;
+                    histo.height = size;
                     
                     ctx.drawImage(img, 0, 0,img.width, img.height, 0, 0, size, size);
 
@@ -196,7 +204,7 @@
 
             if(selecting){
                 drawing = false; 
-                //getSelection();
+                getSelection();
             }
         });
        
@@ -229,6 +237,8 @@
         
                 console.log(`Pixel at (${pixel.x}, ${pixel.y}): Value: ${pixelValue}`);
             });
+            //
+            drawHistogram(selectedPixels, "histo"); 
         }    
         // 
         // Function to draw histogram
