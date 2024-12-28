@@ -361,7 +361,13 @@
         }
         // Function to draw histogram
         function drawHistogram(histogram, canvasId) { 
+            //
+            const existingChart = Chart.getChart(canvasId);
 
+            // Destroy the existing chart instance
+            if (existingChart) {
+                existingChart.destroy();
+            }
             // Extract labels and data from the histogram object
             const labels = Object.keys(histogram);
             const data = Object.values(histogram);
