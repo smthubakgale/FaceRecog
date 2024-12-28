@@ -271,7 +271,7 @@
               });
              //
             drawHistogram(histogram, "histo"); 
-            const threshold = otsuThreshold(histogram);
+            const threshold = calculateThreshold(histogram);
             const meanRadius = calculateMeanRadius(histogram);
             const medianRadius = calculateMedianRadius(histogram);
             
