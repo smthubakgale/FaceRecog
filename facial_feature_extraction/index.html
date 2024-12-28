@@ -235,9 +235,9 @@
             // Get original pixel values using overlay x and y
             selectedPixels.forEach((pixel) => {
                 const originalImageData = ctx.getImageData(pixel.x, pixel.y, 1, 1);
-                const r,g,b,a = originalImageData.data;
+                const pixelValue = originalImageData.data;
 
-                console.log(r,g,b,a);
+                console.log(JSON.parse(pixelValue));
                 //console.log(`Pixel at (${pixel.x}, ${pixel.y}): Value: ${ pixelValue}`);
             });
             //
