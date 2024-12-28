@@ -222,19 +222,23 @@
             const pixels = imageData.data; 
         
             // Loop through pixels to find selected ones 
-            for (let i = 0; i < pixels.length; i++) {
-                if (pixels[i] > 0) { // Check alpha channel (transparency)
-                    const x = (i / 4) % overlay.width;
-                    const y = Math.floor((i / 4) / overlay.width);
-                    selectedPixels.push({ x:x , y:y }); 
+            for (let i = 0; i < pixels.length; i+=4) {
+                try{
+                    if (pixels[i] > 0) { // Check alpha channel (transparency)
+                        const x = (i / 4) % overlay.width;
+                        const y = Math.floor((i / 4) / overlay.width);
+                        selectedPixels.push({ x:x , y:y }); 
+                    }
                 }
+                catch{}
             }
             // Get original pixel values using overlay x and y
             selectedPixels.forEach((pixel) => {
                 const originalImageData = ctx.getImageData(pixel.x, pixel.y, 1, 1);
-                const pixelValue = originalImageData.data;
-        
-                console.log(`Pixel at (${pixel.x}, ${pixel.y}): Value: ${pixelValue}`);
+                const r,g,b,a = originalImageData.data;
+
+                console.log(r,g,b,a);
+                //console.log(`Pixel at (${pixel.x}, ${pixel.y}): Value: ${ pixelValue}`);
             });
             //
             alert("draw");
