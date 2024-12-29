@@ -58,6 +58,8 @@
         <div style="flex:1"> 
             <button id="select-button" disabled>Select Pixels</button>
             <button id="done-button" disabled style="display: none;">Done</button>
+            <button id="facial-test" disabled style="display: none;">Facial Features</button>
+            <button id="reset-button" disabled style="display: none;"> Reset </button>
         </div>
         <div style="flex:1" >
             <div id="result"></div>
@@ -71,12 +73,14 @@
         const ctx = canvas.getContext('2d');
         const selectButton = document.getElementById('select-button');
         const doneButton = document.getElementById('done-button');
+        const resetButton = document.getElementById('reset-button');
         const overlay = document.getElementById('overlay');
         let oCtx = overlay.getContext('2d');
         let drawing = false;
         let lastX, lastY;
         const histo = document.getElementById('histo');
         const result = document.getElementById('result');
+        const facialTest = document.getElementById('facial-test');
 
         let size = 400; 
 
@@ -125,6 +129,8 @@
                                     // Step 5 : Feature Extraction
                                     selectButton.disabled = false;
                                     doneButton.disabled = false;
+                                    resetButton.disabled = false;
+                                    facialTest.disabled = false;
                                     //
                                 });
                                 // 
@@ -153,15 +159,27 @@
             oCtx.clearRect(0, 0, overlay.width, overlay.height);
             overlay.style.display = 'block';
             doneButton.style.display = 'block';
+            resetButton.style.display = 'block';
+            facialTest.style.display = 'block';
             selectButton.style.display = 'none';
             result.innerHTML = "";
             oCtx.clearRect(0, 0, overlay.width, overlay.height);
         });
-
+        
+        facialTest.addEventListener('click', () => {
+            
+        });
+        
+        resetButton.addEventListener('click', () => {
+            
+        });
+        
         doneButton.addEventListener('click', () => {
             selecting = false;
             overlay.style.display = 'none';
             doneButton.style.display = 'none';
+            resetButton.style.display = 'none';
+            facialTest.style.display = 'none';
             selectButton.style.display = 'block'; 
     
             getSelection();
