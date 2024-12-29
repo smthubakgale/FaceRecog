@@ -83,6 +83,7 @@
         const facialTest = document.getElementById('facial-test');
 
         let size = 400; 
+        let edges;
 
         // Load image and preprocess
         imageInput.addEventListener('change', (e) => {
@@ -121,7 +122,7 @@
                                // console.log(blurr);
                                 //alert("B") ; 
                                 // Step 4 : Apply Sobel Edge Segmentation 
-                                let edges = sobelEdgeDetection(blurr , canvas.width, canvas.height);
+                                edges = sobelEdgeDetection(blurr , canvas.width, canvas.height);
                                 imshow(edges, canvas , () =>
                                 { 
                                     //console.log(edges);
@@ -167,7 +168,7 @@
         });
         
         facialTest.addEventListener('click', () => {
-            
+            testFacialFeatures(edges ,canvas);
         });
         
         resetButton.addEventListener('click', () => {
@@ -288,16 +289,15 @@
             const meanRadius = calculateMeanRadius(histogram);
             const medianRadius = calculateMedianRadius(histogram);
             
-            console.log(`Threshold: ${threshold}`);
-            console.log(`Mean Radius: ${meanRadius}`);
-            console.log(`Median Radius: ${medianRadius}`);
-
             var res = `<div> Threshold: ${threshold} </div> 
 <div> Mean Radius: ${meanRadius} </div> 
 <div> Median Radius: ${medianRadius} </div> 
             `;
 
             result.innerHTML = res;
+            // Test Custom Feature
+             testCustomFeature(edges , threshold , 10 , canvas.width , canvas.height)
+            //
         }    
         //  
         function calculateThreshold(histogram) {
@@ -351,10 +351,6 @@
           const middleIndex = Math.floor(totalPixels / 2);
           let cumulativeSum = 0;
 
-          console.log(sortedPixels );
-          console.log(totalPixels);
-          console.log(middleIndex);
-        
           for (let i = 0; i < sortedPixels.length; i++) {
             cumulativeSum += histogram[i];
             if (cumulativeSum >= middleIndex) {
@@ -671,7 +667,8 @@
             return features;
         }
 
-        function testFacialFeatures(edges ,canvas){
+        function testFacialFeatures(edges ,canvas)
+        {
             const ctx = canvas.getContext('2d');
             const features = detectFacialFeatures(edges, canvas.width, canvas.height);
             
