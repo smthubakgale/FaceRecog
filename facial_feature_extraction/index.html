@@ -157,6 +157,8 @@
                 
                 resetButton.style.display = 'block';
                 facialTest.style.display = 'block';
+                result.innerHTML = '';
+                oCtx.clearRect(0, 0, histo.width, histo.height);
                 //
             });
         }
