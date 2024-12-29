@@ -167,6 +167,8 @@
             overlay.style.display = 'block';
             doneButton.style.display = 'block';
             selectButton.style.display = 'none';
+            resetButton.style.display = 'none';
+            facialTest.style.display = 'none';
             result.innerHTML = "";
             oCtx.clearRect(0, 0, overlay.width, overlay.height);
         });
@@ -183,8 +185,8 @@
             selecting = false;
             overlay.style.display = 'none';
             doneButton.style.display = 'none';
-            resetButton.style.display = 'none';
-            facialTest.style.display = 'none';
+            resetButton.style.display = 'block';
+            facialTest.style.display = 'block';
             selectButton.style.display = 'block'; 
     
             getSelection();
