@@ -60,7 +60,7 @@
             <button id="done-button" disabled style="display: none;">Done</button>
         </div>
         <div style="flex:1" >
-            <span id="result"></span>
+            <div id="result"></div>
         </div>
     </div>
     
@@ -274,9 +274,9 @@
             console.log(`Mean Radius: ${meanRadius}`);
             console.log(`Median Radius: ${medianRadius}`);
 
-            var res = `Threshold: ${threshold}
-Mean Radius: ${meanRadius}
-Median Radius: ${medianRadius}
+            var res = `<div> Threshold: ${threshold} </div> 
+<div> Mean Radius: ${meanRadius} </div> 
+<div> Median Radius: ${medianRadius} </div> 
             `;
 
             result.innerHTML = res;
