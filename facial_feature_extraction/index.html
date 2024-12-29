@@ -154,6 +154,9 @@
                 doneButton.disabled = false;
                 resetButton.disabled = false;
                 facialTest.disabled = false;
+                
+                resetButton.style.display = 'block';
+                facialTest.style.display = 'block';
                 //
             });
         }
@@ -163,8 +166,6 @@
             oCtx.clearRect(0, 0, overlay.width, overlay.height);
             overlay.style.display = 'block';
             doneButton.style.display = 'block';
-            resetButton.style.display = 'block';
-            facialTest.style.display = 'block';
             selectButton.style.display = 'none';
             result.innerHTML = "";
             oCtx.clearRect(0, 0, overlay.width, overlay.height);
@@ -548,12 +549,14 @@
                 for (let x = 0; x < width; x++)
                 {
                     const edgeIndex = y * width * 4 + x * 4;
-                    if (edges[edgeIndex] > facialContourThreshold) 
+                    if (edges[edgeIndex] > threshold) 
                     {
                         features.push({ x:x , y:y, type: 'custom_feature' });
                     }
                 }
             }
+
+            console.log(features);
 
              features.forEach(feature => {
                 ctx.fillStyle = 'purple';
