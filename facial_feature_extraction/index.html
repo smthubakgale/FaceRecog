@@ -55,7 +55,7 @@
         </div>
     </div>
     <div style="display:flex">
-        <div style="flex:1"> 
+        <div style="flex:1; display:flex; flex-wrap: wrap; gap:10px;"> 
             <button id="select-button" disabled>Select Pixels</button>
             <button id="done-button" disabled style="display: none;">Done</button>
             <button id="facial-test" disabled style="display: none;">Facial Features</button>
@@ -123,17 +123,7 @@
                                 //alert("B") ; 
                                 // Step 4 : Apply Sobel Edge Segmentation 
                                 edges = sobelEdgeDetection(blurr , canvas.width, canvas.height);
-                                imshow(edges, canvas , () =>
-                                { 
-                                    //console.log(edges);
-                                    //alert("C") ; 
-                                    // Step 5 : Feature Extraction
-                                    selectButton.disabled = false;
-                                    doneButton.disabled = false;
-                                    resetButton.disabled = false;
-                                    facialTest.disabled = false;
-                                    //
-                                });
+                                reset();
                                 // 
                             });
                             //
@@ -154,6 +144,19 @@
         let selectionRect = { x: 0, y: 0, width: 0, height: 0 };
         let selectedPixels = [];
 
+        function reset(){
+            imshow(edges, canvas , () =>
+            { 
+                //console.log(edges);
+                //alert("C") ; 
+                // Step 5 : Feature Extraction
+                selectButton.disabled = false;
+                doneButton.disabled = false;
+                resetButton.disabled = false;
+                facialTest.disabled = false;
+                //
+            });
+        }
         // Event listeners
         selectButton.addEventListener('click', () => {
             selecting = true;
@@ -172,7 +175,7 @@
         });
         
         resetButton.addEventListener('click', () => {
-            
+            reset();
         });
         
         doneButton.addEventListener('click', () => {
