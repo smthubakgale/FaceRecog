@@ -176,7 +176,6 @@
         });
         
         facialTest.addEventListener('click', () => {
-            reset();
             testFacialFeatures(edges ,canvas);
         });
         
@@ -548,21 +547,35 @@
         function testCustomFeature(edges , threshold , radius, width , height)
         { 
            const features = [];
- 
-           for (let y = 0; y < height; y++) 
-           {
-                for (let x = 0; x < width; x++)
-                {
+           // Detect face center
+            let maxEdge = 0;
+            let centerX, centerY;
+            
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
                     const edgeIndex = y * width * 4 + x * 4;
-                    if (edges[edgeIndex] > threshold) 
-                    {
-                        features.push({ x:x , y:y, type: 'custom_feature' });
+                    if (edges[edgeIndex] > maxEdge) {
+                        maxEdge = edges[edgeIndex];
+                        centerX = x;
+                        centerY = y;
                     }
                 }
             }
 
-            console.log(features);
+            features.push({ x: centerX, y: centerY });
 
+            // Detect eye centers
+            const eyeRadius = 10;
+            const eyeThreshold = 100;
+            for (let y = centerY - radius; y <= centerY + radius; y++) {
+                for (let x = centerX - radius; x <= centerX + radius; x++) {
+                    const edgeIndex = y * width * 4 + x * 4;
+                    if (edges[edgeIndex] > threshold) {
+                        features.push({ x:x , y:y });
+                    }
+                }
+            }
+ 
              features.forEach(feature => {
                 ctx.fillStyle = 'purple';
                 
@@ -683,8 +696,6 @@
             const ctx = canvas.getContext('2d');
             const features = detectFacialFeatures(edges, canvas.width, canvas.height);
             
-            console.log(features);
-    
             //ctx.clearRect(0, 0, canvas.width, canvas.height, 0, 0, size, size); 
             const colorMap = {
               eye_center: 'red',
