@@ -154,7 +154,7 @@
             overlay.style.display = 'none';
             doneButton.style.display = 'none';
             selectButton.style.display = 'block'; 
-            alert("A");
+    
             getSelection();
         });
         //
@@ -304,6 +304,9 @@
           let threshold = 0;
           const totalPixels = Object.values(histogram).reduce((sum, frequency) => sum + frequency, 0);
           const sumWeightedPixels = Object.keys(histogram).reduce((sum, pixelValue) => sum + pixelValue * histogram, 0);
+
+          console.log(totalPixels);
+          console.log(sumWeightedPixels);
         
           for (let t = 0; t <= 255; t++) {
             let foregroundPixels = 0;
@@ -320,13 +323,17 @@
                 backgroundSum += pixelValue * histogram;
               }
             });
+
+            console.log(foregroundPixels , backgroundPixels);
         
             const foregroundMean = foregroundPixels > 0 ? foregroundSum / foregroundPixels : 0;
             const backgroundMean = backgroundPixels > 0 ? backgroundSum / backgroundPixels : 0;
         
             const variance = (foregroundPixels * Math.pow(foregroundMean - sumWeightedPixels / totalPixels, 2) +
               backgroundPixels * Math.pow(backgroundMean - sumWeightedPixels / totalPixels, 2)) / totalPixels;
-        
+
+            console.log(variance , maxVariance);
+              
             if (variance > maxVariance) {
               maxVariance = variance;
               threshold = t;
