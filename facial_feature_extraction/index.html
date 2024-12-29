@@ -332,11 +332,15 @@
           const totalPixels = Object.values(histogram).reduce((sum, frequency) => sum + frequency, 0);
           const middleIndex = Math.floor(totalPixels / 2);
           let cumulativeSum = 0;
+
+          console.log(sortedPixels );
+          console.log(totalPixels);
+          console.log(middleIndex);
         
           for (let i = 0; i < sortedPixels.length; i++) {
             cumulativeSum += histogram[i];
             if (cumulativeSum >= middleIndex) {
-              return sortedPixels;
+              return sortedPixels[i];
             }
           }
         
