@@ -303,7 +303,7 @@
           let maxVariance = 0;
           let threshold = 0;
           const totalPixels = Object.values(histogram).reduce((sum, frequency) => sum + frequency, 0);
-          const sumWeightedPixels = Object.keys(histogram).reduce((sum, pixelValue) => sum + pixelValue * histogram, 0);
+          const sumWeightedPixels = Object.keys(histogram).reduce((sum, pixelValue) => sum + pixelValue * histogram[pixelValue], 0);
 
           console.log(totalPixels);
           console.log(sumWeightedPixels);
@@ -316,11 +316,11 @@
         
             Object.keys(histogram).forEach((pixelValue) => {
               if (pixelValue >= t) {
-                foregroundPixels += histogram;
-                foregroundSum += pixelValue * histogram;
+                foregroundPixels += histogram[pixelValue];
+                foregroundSum += pixelValue * histogram[pixelValue];
               } else {
-                backgroundPixels += histogram;
-                backgroundSum += pixelValue * histogram;
+                backgroundPixels += histogram[pixelValue];
+                backgroundSum += pixelValue * histogram[pixelValue];
               }
             });
 
